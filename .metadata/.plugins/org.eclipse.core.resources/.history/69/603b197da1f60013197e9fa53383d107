@@ -1,0 +1,7 @@
+package manipulador.view;
+
+public interface IGUI {
+
+	void addTransicao();
+
+}

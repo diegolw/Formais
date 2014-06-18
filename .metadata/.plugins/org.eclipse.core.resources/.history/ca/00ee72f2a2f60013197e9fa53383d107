@@ -1,0 +1,11 @@
+package manipulador.controller;
+
+public class Mediator {
+	
+	public Mediator() {
+		
+	}
+	
+	
+
+}

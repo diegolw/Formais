@@ -1,0 +1,18 @@
+package manipulador.controller;
+
+import manipulador.view.GUI;
+import manipulador.view.IGUI;
+
+public class Mediator {
+	
+	private GUI window;
+	
+	public Mediator() {
+		window = new GUI();
+		window.setVisible(true);
+		window.addEventListener(this);
+	}
+	
+	
+
+}

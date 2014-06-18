@@ -1,0 +1,212 @@
+package manipulador.view;
+
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.swing.ButtonGroup;
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JFrame;
+import javax.swing.JList;
+import javax.swing.JMenuBar;
+import javax.swing.JPanel;
+import javax.swing.JRadioButton;
+import javax.swing.JScrollPane;
+import javax.swing.JTextField;
+import javax.swing.border.TitledBorder;
+
+import net.miginfocom.swing.MigLayout;
+
+public class GUI {
+
+	private JFrame frmManipuladorDeLinguagens;
+	private JTextField txtNovo;
+	
+	private List<IGUI> listeners;
+
+	/**
+	 * Create the application.
+	 */
+	public GUI() {
+		initialize();
+
+		listeners = new ArrayList<IGUI>();
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {
+		frmManipuladorDeLinguagens = new JFrame();
+		frmManipuladorDeLinguagens.setTitle("Manipulador de Linguagens Regulares");
+		frmManipuladorDeLinguagens.setBounds(100, 100, 800, 800);
+		frmManipuladorDeLinguagens.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frmManipuladorDeLinguagens.getContentPane().setLayout(new MigLayout("", "[grow][grow][grow]", "[300px,grow][][300,grow][grow][16.00]"));
+		
+		JPanel panelAutomato1 = new JPanel();
+		panelAutomato1.setBorder(new TitledBorder(null, "Aut\u00F4mato 1", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		frmManipuladorDeLinguagens.getContentPane().add(panelAutomato1, "cell 0 0,grow");
+		panelAutomato1.setLayout(new MigLayout("", "[1px][grow]", "[grow]"));
+		
+		JScrollPane scrollPaneAutomato1 = new JScrollPane();
+		panelAutomato1.add(scrollPaneAutomato1, "cell 1 0,grow");
+		
+		JList listAutmato1 = new JList();
+		scrollPaneAutomato1.setViewportView(listAutmato1);
+		
+		JPanel panelAutomato2 = new JPanel();
+		panelAutomato2.setBorder(new TitledBorder(null, "Aut\u00F4mato 2", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		frmManipuladorDeLinguagens.getContentPane().add(panelAutomato2, "cell 1 0,grow");
+		panelAutomato2.setLayout(new MigLayout("", "[1px][grow]", "[grow]"));
+		
+		JScrollPane scrollPaneAutomato2 = new JScrollPane();
+		panelAutomato2.add(scrollPaneAutomato2, "cell 1 0,grow");
+		
+		JList listAutmato2 = new JList();
+		scrollPaneAutomato2.setViewportView(listAutmato2);
+		
+		JPanel panelOperacoes = new JPanel();
+		panelOperacoes.setBorder(new TitledBorder(null, "Opera\u00E7\u00F5es", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		frmManipuladorDeLinguagens.getContentPane().add(panelOperacoes, "cell 2 0 1 3,grow");
+		panelOperacoes.setLayout(new MigLayout("", "[]", "[][]"));
+		
+		JButton btnDeterminizar = new JButton("Determinizar");
+		btnDeterminizar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		panelOperacoes.add(btnDeterminizar, "cell 0 0,growx");
+		
+		JButton btnMinimizar = new JButton("Minimizar");
+		btnMinimizar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		panelOperacoes.add(btnMinimizar, "cell 0 1,growx");
+		
+		JPanel panelEditar = new JPanel();
+		panelEditar.setBorder(new TitledBorder(null, "Editar", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		frmManipuladorDeLinguagens.getContentPane().add(panelEditar, "cell 0 1 2 1,growx,aligny bottom");
+		panelEditar.setLayout(new MigLayout("", "[][][grow][]", "[][][]"));
+		
+		JRadioButton rdbtnAutmato = new JRadioButton("Autômato 1");
+		panelEditar.add(rdbtnAutmato, "cell 0 0");
+		rdbtnAutmato.setSelected(true);
+		
+		JRadioButton rdbtnAutmato2 = new JRadioButton("Autômato 2");
+		panelEditar.add(rdbtnAutmato2, "cell 1 0");
+		
+		ButtonGroup groupAutomato = new ButtonGroup();
+		groupAutomato.add(rdbtnAutmato);
+		groupAutomato.add(rdbtnAutmato2);
+		
+		JButton btnNovoAlfabeto = new JButton("Novo Alfabeto");
+		btnNovoAlfabeto.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+			}
+		});
+		panelEditar.add(btnNovoAlfabeto, "cell 3 0,alignx right");
+		
+		JPanel panelEstado = new JPanel();
+		panelEstado.setBorder(new TitledBorder(null, "Estado", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panelEditar.add(panelEstado, "cell 0 1 4 1,grow");
+		panelEstado.setLayout(new MigLayout("", "[grow]", "[]"));
+		
+		txtNovo = new JTextField();
+		txtNovo.setText("Novo");
+		panelEstado.add(txtNovo, "flowx,cell 0 0,growx");
+		txtNovo.setColumns(10);
+		
+		JButton btnAdicionar = new JButton("Adicionar");
+		btnAdicionar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				for (IGUI listener : listeners) {
+					listener.adicionar();
+				}
+			}
+		});
+		panelEstado.add(btnAdicionar, "cell 0 0");
+		
+		JComboBox comboBox = new JComboBox();
+		panelEstado.add(comboBox, "cell 0 0,growx");
+		
+		JButton btnRemover = new JButton("Remover");
+		btnRemover.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				for (IGUI listener : listeners) {
+					listener.remover();
+				}
+			}
+		});
+		panelEstado.add(btnRemover, "cell 0 0");
+		
+		JButton btnInicial = new JButton("Inicial");
+		btnInicial.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				for (IGUI listener : listeners) {
+					listener.setaTerminalFinal();
+				}
+			}
+		});
+		panelEstado.add(btnInicial, "cell 0 0");
+		
+		JButton btnFinal = new JButton("Final");
+		btnFinal.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				for (IGUI listener : listeners) {
+					listener.setaTerminalFinal();
+				}
+			}
+		});
+		panelEstado.add(btnFinal, "cell 0 0");
+		
+		JPanel panelTransicao = new JPanel();
+		panelTransicao.setToolTipText("");
+		panelTransicao.setBorder(new TitledBorder(null, "Transi\u00E7\u00E3o", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panelEditar.add(panelTransicao, "cell 0 2 4 1,grow");
+		panelTransicao.setLayout(new MigLayout("", "[grow][grow][grow][]", "[]"));
+		
+		JComboBox comboBoxOrigem = new JComboBox();
+		panelTransicao.add(comboBoxOrigem, "cell 0 0,growx");
+		
+		JComboBox comboBoxDestino = new JComboBox();
+		panelTransicao.add(comboBoxDestino, "flowx,cell 1 0,growx");
+		
+		JComboBox comboBoxSimbolo = new JComboBox();
+		panelTransicao.add(comboBoxSimbolo, "flowx,cell 2 0,growx");
+		
+		JButton btnAdicionarTrans = new JButton("Adicionar");
+		btnAdicionarTrans.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				for (IGUI listener : listeners) {
+					listener.addTransicao();
+				}
+			}
+		});
+		panelTransicao.add(btnAdicionarTrans, "cell 3 0");
+		
+		JPanel panelResultado = new JPanel();
+		panelResultado.setBorder(new TitledBorder(null, "Resultado", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		frmManipuladorDeLinguagens.getContentPane().add(panelResultado, "cell 0 2 2 1,grow");
+		panelResultado.setLayout(new MigLayout("", "[grow][3px]", "[grow][3px]"));
+		
+		JScrollPane scrollPaneResultado = new JScrollPane();
+		panelResultado.add(scrollPaneResultado, "cell 0 0,grow");
+		
+		JList listResultado = new JList();
+		scrollPaneResultado.setViewportView(listResultado);
+		
+		JMenuBar menuBar = new JMenuBar();
+		frmManipuladorDeLinguagens.setJMenuBar(menuBar);
+	}
+
+	public void setVisible(boolean b) {
+		frmManipuladorDeLinguagens.setVisible(b);
+	}
+
+	public void addEventListener(IGUI listener) {
+		listeners.add(listener);
+	}
+}

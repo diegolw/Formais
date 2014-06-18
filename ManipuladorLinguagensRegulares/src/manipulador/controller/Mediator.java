@@ -1,0 +1,58 @@
+package manipulador.controller;
+
+import manipulador.view.GUI;
+import manipulador.view.IGUI;
+
+public class Mediator implements IGUI {
+	
+	private GUI window;
+	
+	public Mediator() {
+		window = new GUI();
+		window.setVisible(true);
+		window.addEventListener(this);
+	}
+
+	@Override
+	public void determinizar() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void minimizar() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void novoAlfabeto() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void adicionarEstado() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void remover() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void setaTerminalInicial() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void adicionarTransicao() {
+		// TODO Auto-generated method stub
+		
+	}
+
+}
