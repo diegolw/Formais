@@ -2,7 +2,7 @@ package manipulador;
 
 import java.awt.EventQueue;
 
-import manipulador.view.GUI;
+import manipulador.controller.Mediator;
 
 public class Main {
 
@@ -13,8 +13,7 @@ public class Main {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
 				try {
-					GUI window = new GUI();
-					window.setVisible(true);
+					Mediator mediator = new Mediator();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
