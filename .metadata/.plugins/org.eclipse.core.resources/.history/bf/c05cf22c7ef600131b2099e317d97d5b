@@ -1,0 +1,145 @@
+package manipulador.view;
+
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import net.miginfocom.swing.MigLayout;
+import javax.swing.JPanel;
+import javax.swing.border.TitledBorder;
+import javax.swing.JRadioButton;
+import javax.swing.JButton;
+import javax.swing.JTable;
+import javax.swing.JTextField;
+import javax.swing.JComboBox;
+import javax.swing.JScrollPane;
+import javax.swing.JList;
+
+public class Layout {
+
+	private JFrame frame;
+	private JTextField txtNovo;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Layout window = new Layout();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the application.
+	 */
+	public Layout() {
+		initialize();
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {
+		frame = new JFrame();
+		frame.setBounds(100, 100, 724, 513);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setLayout(new MigLayout("", "[grow][grow][grow]", "[365.00,grow][311.00]"));
+		
+		JPanel panelAutomato1 = new JPanel();
+		panelAutomato1.setBorder(new TitledBorder(null, "Aut\u00F4mato 1", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		frame.getContentPane().add(panelAutomato1, "cell 0 0,grow");
+		panelAutomato1.setLayout(new MigLayout("", "[1px][grow]", "[grow]"));
+		
+		JScrollPane scrollPaneAutomato1 = new JScrollPane();
+		panelAutomato1.add(scrollPaneAutomato1, "cell 1 0,grow");
+		
+		JList listAutmato1 = new JList();
+		scrollPaneAutomato1.setViewportView(listAutmato1);
+		
+		JPanel panelAutomato2 = new JPanel();
+		panelAutomato2.setBorder(new TitledBorder(null, "Aut\u00F4mato 2", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		frame.getContentPane().add(panelAutomato2, "cell 1 0,grow");
+		panelAutomato2.setLayout(new MigLayout("", "[1px][grow]", "[grow]"));
+		
+		JScrollPane scrollPaneAutomato2 = new JScrollPane();
+		panelAutomato2.add(scrollPaneAutomato2, "cell 1 0,grow");
+		
+		JList listAutmato2 = new JList();
+		scrollPaneAutomato2.setViewportView(listAutmato2);
+		
+		JPanel panelOperacoes = new JPanel();
+		panelOperacoes.setBorder(new TitledBorder(null, "Opera\u00E7\u00F5es", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		frame.getContentPane().add(panelOperacoes, "cell 2 0 1 2,grow");
+		panelOperacoes.setLayout(new MigLayout("", "[]", "[][]"));
+		
+		JButton btnDeterminizar = new JButton("Determinizar");
+		panelOperacoes.add(btnDeterminizar, "cell 0 0,growx");
+		
+		JButton btnMinimizar = new JButton("Minimizar");
+		panelOperacoes.add(btnMinimizar, "cell 0 1,growx");
+		
+		JPanel panelEditar = new JPanel();
+		panelEditar.setBorder(new TitledBorder(null, "Editar", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		frame.getContentPane().add(panelEditar, "cell 0 1 2 1,growx,aligny bottom");
+		panelEditar.setLayout(new MigLayout("", "[][][grow][]", "[][][]"));
+		
+		JRadioButton rdbtnAutmato = new JRadioButton("Autômato 1");
+		panelEditar.add(rdbtnAutmato, "cell 0 0");
+		
+		JRadioButton rdbtnAutmato2 = new JRadioButton("Autômato 2");
+		panelEditar.add(rdbtnAutmato2, "cell 1 0");
+		
+		JButton btnNovoAlfabeto = new JButton("Novo Alfabeto");
+		panelEditar.add(btnNovoAlfabeto, "cell 3 0,alignx right");
+		
+		JPanel panelEstado = new JPanel();
+		panelEstado.setBorder(new TitledBorder(null, "Estado", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panelEditar.add(panelEstado, "cell 0 1 4 1,grow");
+		panelEstado.setLayout(new MigLayout("", "[grow]", "[][]"));
+		
+		txtNovo = new JTextField();
+		txtNovo.setText("Novo");
+		panelEstado.add(txtNovo, "flowx,cell 0 0,growx");
+		txtNovo.setColumns(10);
+		
+		JButton btnAdicionar = new JButton("Adicionar");
+		panelEstado.add(btnAdicionar, "cell 0 0");
+		
+		JComboBox comboBox = new JComboBox();
+		panelEstado.add(comboBox, "flowx,cell 0 1,growx");
+		
+		JButton btnRemover = new JButton("Remover");
+		panelEstado.add(btnRemover, "cell 0 1");
+		
+		JButton btnInicial = new JButton("Inicial");
+		panelEstado.add(btnInicial, "cell 0 1");
+		
+		JButton btnFinal = new JButton("Final");
+		panelEstado.add(btnFinal, "cell 0 1");
+		
+		JPanel panelTransicao = new JPanel();
+		panelTransicao.setToolTipText("");
+		panelTransicao.setBorder(new TitledBorder(null, "Transi\u00E7\u00E3o", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		panelEditar.add(panelTransicao, "cell 0 2 4 1,grow");
+		panelTransicao.setLayout(new MigLayout("", "[grow][grow][grow][]", "[]"));
+		
+		JComboBox comboBoxOrigem = new JComboBox();
+		panelTransicao.add(comboBoxOrigem, "cell 0 0,growx");
+		
+		JComboBox comboBoxDestino = new JComboBox();
+		panelTransicao.add(comboBoxDestino, "flowx,cell 1 0,growx");
+		
+		JComboBox comboBoxSimbolo = new JComboBox();
+		panelTransicao.add(comboBoxSimbolo, "flowx,cell 2 0,growx");
+		
+		JButton btnAdicionar_1 = new JButton("Adicionar");
+		panelTransicao.add(btnAdicionar_1, "cell 3 0");
+	}
+
+}

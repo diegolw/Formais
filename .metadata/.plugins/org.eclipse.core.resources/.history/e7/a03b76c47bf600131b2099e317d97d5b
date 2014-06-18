@@ -1,0 +1,84 @@
+package manipulador.view;
+
+import java.awt.EventQueue;
+
+import javax.swing.JFrame;
+import net.miginfocom.swing.MigLayout;
+import javax.swing.JPanel;
+import javax.swing.border.TitledBorder;
+import javax.swing.JRadioButton;
+import javax.swing.JButton;
+import javax.swing.JTable;
+
+public class Layout {
+
+	private JFrame frame;
+	private JTable tableAutmato1;
+	private JTable tableAutmato2;
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Layout window = new Layout();
+					window.frame.setVisible(true);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+	/**
+	 * Create the application.
+	 */
+	public Layout() {
+		initialize();
+	}
+
+	/**
+	 * Initialize the contents of the frame.
+	 */
+	private void initialize() {
+		frame = new JFrame();
+		frame.setBounds(100, 100, 450, 300);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.getContentPane().setLayout(new MigLayout("", "[grow][grow][grow]", "[grow][grow]"));
+		
+		JPanel panelAutomato1 = new JPanel();
+		panelAutomato1.setBorder(new TitledBorder(null, "Aut\u00F4mato 1", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		frame.getContentPane().add(panelAutomato1, "cell 0 0,grow");
+		
+		tableAutmato1 = new JTable();
+		panelAutomato1.add(tableAutmato1);
+		
+		JPanel panelAutomato2 = new JPanel();
+		panelAutomato2.setBorder(new TitledBorder(null, "Aut\u00F4mato 2", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		frame.getContentPane().add(panelAutomato2, "cell 1 0,grow");
+		
+		tableAutmato2 = new JTable();
+		panelAutomato2.add(tableAutmato2);
+		
+		JPanel panelOperacoes = new JPanel();
+		panelOperacoes.setBorder(new TitledBorder(null, "Opera\u00E7\u00F5es", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		frame.getContentPane().add(panelOperacoes, "cell 2 0 1 2,grow");
+		
+		JPanel panelEditar = new JPanel();
+		panelEditar.setBorder(new TitledBorder(null, "Editar", TitledBorder.LEADING, TitledBorder.TOP, null, null));
+		frame.getContentPane().add(panelEditar, "cell 0 1 2 1,grow");
+		panelEditar.setLayout(new MigLayout("", "[][][]", "[]"));
+		
+		JRadioButton rdbtnAutmato = new JRadioButton("Autômato 1");
+		panelEditar.add(rdbtnAutmato, "cell 0 0");
+		
+		JRadioButton rdbtnAutmato2 = new JRadioButton("Autômato 2");
+		panelEditar.add(rdbtnAutmato2, "cell 1 0");
+		
+		JButton btnNovoAlfabeto = new JButton("Novo Alfabeto");
+		panelEditar.add(btnNovoAlfabeto, "cell 2 0");
+	}
+
+}

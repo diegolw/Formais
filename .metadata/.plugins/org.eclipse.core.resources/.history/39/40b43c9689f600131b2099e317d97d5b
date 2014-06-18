@@ -1,0 +1,24 @@
+package manipulador;
+
+import java.awt.EventQueue;
+
+import manipulador.view.Layout;
+
+public class Main {
+
+	/**
+	 * Launch the application.
+	 */
+	public static void main(String[] args) {
+		EventQueue.invokeLater(new Runnable() {
+			public void run() {
+				try {
+					Layout window = new Layout();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		});
+	}
+
+}
