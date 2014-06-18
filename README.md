@@ -1,4 +1,4 @@
-Regular Language Handler
+Manipulador de Linguagens Regulares
 -----------
 Aplicação para manipular Linguagens  Regulares, expressas através de GR, AF (determinísticos ou não) e ER, que:
 
