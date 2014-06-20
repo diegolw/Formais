@@ -184,32 +184,32 @@ public class GUI {
 		});
 		panelEstado.add(btnFinal, "cell 0 0");
 
-		JPanel panelTransicao = new JPanel();
-		panelTransicao.setToolTipText("");
-		panelTransicao.setBorder(new TitledBorder(null, "Transi\u00E7\u00E3o",
-				TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panelEditar.add(panelTransicao, "cell 0 2 4 1,grow");
-		panelTransicao
-				.setLayout(new MigLayout("", "[grow][grow][grow][]", "[]"));
-
-		JComboBox comboBoxOrigem = new JComboBox();
-		panelTransicao.add(comboBoxOrigem, "cell 0 0,growx");
-
-		JComboBox comboBoxDestino = new JComboBox();
-		panelTransicao.add(comboBoxDestino, "flowx,cell 1 0,growx");
-
-		JComboBox comboBoxSimbolo = new JComboBox();
-		panelTransicao.add(comboBoxSimbolo, "flowx,cell 2 0,growx");
-
-		JButton btnAdicionarTrans = new JButton("Adicionar");
-		btnAdicionarTrans.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				for (IGUI listener : listeners) {
-					listener.adicionarTransicao();
-				}
-			}
-		});
-		panelTransicao.add(btnAdicionarTrans, "cell 3 0");
+//		JPanel panelTransicao = new JPanel();
+//		panelTransicao.setToolTipText("");
+//		panelTransicao.setBorder(new TitledBorder(null, "Transi\u00E7\u00E3o",
+//				TitledBorder.LEADING, TitledBorder.TOP, null, null));
+//		panelEditar.add(panelTransicao, "cell 0 2 4 1,grow");
+//		panelTransicao
+//				.setLayout(new MigLayout("", "[grow][grow][grow][]", "[]"));
+//
+//		JComboBox comboBoxOrigem = new JComboBox();
+//		panelTransicao.add(comboBoxOrigem, "cell 0 0,growx");
+//
+//		JComboBox comboBoxDestino = new JComboBox();
+//		panelTransicao.add(comboBoxDestino, "flowx,cell 1 0,growx");
+//
+//		JComboBox comboBoxSimbolo = new JComboBox();
+//		panelTransicao.add(comboBoxSimbolo, "flowx,cell 2 0,growx");
+//
+//		JButton btnAdicionarTrans = new JButton("Adicionar");
+//		btnAdicionarTrans.addActionListener(new ActionListener() {
+//			public void actionPerformed(ActionEvent e) {
+//				for (IGUI listener : listeners) {
+//					listener.adicionarTransicao();
+//				}
+//			}
+//		});
+//		panelTransicao.add(btnAdicionarTrans, "cell 3 0");
 
 		JPanel panelResultado = new JPanel();
 		panelResultado.setBorder(new TitledBorder(null, "Resultado",
