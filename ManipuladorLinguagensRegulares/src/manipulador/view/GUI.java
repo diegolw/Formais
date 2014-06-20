@@ -18,13 +18,15 @@ import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
 
 import net.miginfocom.swing.MigLayout;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
 
 public class GUI {
 
 	private JFrame frmManipuladorDeLinguagens;
-	private JTextField txtNovo;
 
 	private List<IGUI> listeners;
+	private JTextField txtAlfabeto;
 
 	/**
 	 * Create the application.
@@ -46,8 +48,7 @@ public class GUI {
 		frmManipuladorDeLinguagens
 				.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frmManipuladorDeLinguagens.getContentPane().setLayout(
-				new MigLayout("", "[grow][grow][grow]",
-						"[300px,grow][][300,grow][grow][16.00]"));
+				new MigLayout("", "[grow][grow][grow]", "[300px,grow][][300,grow][16.00]"));
 
 		JPanel panelAutomato1 = new JPanel();
 		panelAutomato1.setBorder(new TitledBorder(null, "Aut\u00F4mato 1",
@@ -80,17 +81,7 @@ public class GUI {
 				TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		frmManipuladorDeLinguagens.getContentPane().add(panelOperacoes,
 				"cell 2 0 1 3,grow");
-		panelOperacoes.setLayout(new MigLayout("", "[]", "[][]"));
-
-		JButton btnDeterminizar = new JButton("Determinizar");
-		btnDeterminizar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				for (IGUI listener : listeners) {
-					listener.determinizar();
-				}
-			}
-		});
-		panelOperacoes.add(btnDeterminizar, "cell 0 0,growx");
+		panelOperacoes.setLayout(new MigLayout("", "[]", "[][][][][][][][]"));
 
 		JButton btnMinimizar = new JButton("Minimizar");
 		btnMinimizar.addActionListener(new ActionListener() {
@@ -100,14 +91,39 @@ public class GUI {
 				}
 			}
 		});
-		panelOperacoes.add(btnMinimizar, "cell 0 1,growx");
+		panelOperacoes.add(btnMinimizar, "cell 0 0,growx");
+		
+		JButton btnComplemento = new JButton("Complemento");
+		panelOperacoes.add(btnComplemento, "cell 0 1,growx");
+		
+		JButton btnLL_1 = new JButton("L1 ∩ L2");
+		panelOperacoes.add(btnLL_1, "cell 0 3,growx");
+		
+		JButton btnLL_2 = new JButton("L1 ∪ L2");
+		panelOperacoes.add(btnLL_2, "cell 0 4,growx");
+		
+		JButton btnLL = new JButton("L1 = L2?");
+		panelOperacoes.add(btnLL, "cell 0 2,growx");
+		
+		JButton btnReverso = new JButton("Reverso");
+		panelOperacoes.add(btnReverso, "cell 0 5,growx");
+		
+		JButton btnEnumerar = new JButton("Enumerar");
+		panelOperacoes.add(btnEnumerar, "cell 0 6,growx");
+		
+		JButton btnVazia = new JButton("Vazia, infinita ou finita?");
+		btnVazia.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+			}
+		});
+		panelOperacoes.add(btnVazia, "cell 0 7,growx");
 
 		JPanel panelEditar = new JPanel();
 		panelEditar.setBorder(new TitledBorder(null, "Editar",
 				TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		frmManipuladorDeLinguagens.getContentPane().add(panelEditar,
 				"cell 0 1 2 1,growx,aligny bottom");
-		panelEditar.setLayout(new MigLayout("", "[][][grow][]", "[][][]"));
+		panelEditar.setLayout(new MigLayout("", "[][][grow]", "[]"));
 
 		JRadioButton rdbtnAutmato = new JRadioButton("Autômato 1");
 		panelEditar.add(rdbtnAutmato, "cell 0 0");
@@ -119,70 +135,20 @@ public class GUI {
 		ButtonGroup groupAutomato = new ButtonGroup();
 		groupAutomato.add(rdbtnAutmato);
 		groupAutomato.add(rdbtnAutmato2);
-
-		JButton btnNovoAlfabeto = new JButton("Novo Alfabeto");
-		btnNovoAlfabeto.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				for (IGUI listener : listeners) {
-					listener.novoAlfabeto();
-				}
-			}
-		});
-		panelEditar.add(btnNovoAlfabeto, "cell 3 0,alignx right");
-
-		JPanel panelEstado = new JPanel();
-		panelEstado.setBorder(new TitledBorder(null, "Estado",
-				TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		panelEditar.add(panelEstado, "cell 0 1 4 1,grow");
-		panelEstado.setLayout(new MigLayout("", "[grow]", "[]"));
-
-		txtNovo = new JTextField();
-		txtNovo.setText("Novo");
-		panelEstado.add(txtNovo, "flowx,cell 0 0,growx");
-		txtNovo.setColumns(10);
-
-		JButton btnAdicionar = new JButton("Adicionar");
-		btnAdicionar.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent arg0) {
-				for (IGUI listener : listeners) {
-					listener.adicionarEstado();
-				}
-			}
-		});
-		panelEstado.add(btnAdicionar, "cell 0 0");
-
-		JComboBox comboBox = new JComboBox();
-		panelEstado.add(comboBox, "cell 0 0,growx");
-
-		JButton btnRemover = new JButton("Remover");
-		btnRemover.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				for (IGUI listener : listeners) {
-					listener.remover();
-				}
-			}
-		});
-		panelEstado.add(btnRemover, "cell 0 0");
-
-		JButton btnInicial = new JButton("Inicial");
-		btnInicial.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				for (IGUI listener : listeners) {
-					listener.setaTerminalInicial();
-				}
-			}
-		});
-		panelEstado.add(btnInicial, "cell 0 0");
-
-		JButton btnFinal = new JButton("Final");
-		btnFinal.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				for (IGUI listener : listeners) {
-					listener.setaTerminalInicial();
-				}
-			}
-		});
-		panelEstado.add(btnFinal, "cell 0 0");
+		
+				JButton btnNovoAlfabeto = new JButton("Novo ");
+				btnNovoAlfabeto.addActionListener(new ActionListener() {
+					public void actionPerformed(ActionEvent arg0) {
+						for (IGUI listener : listeners) {
+							listener.novoAlfabeto();
+						}
+					}
+				});
+				panelEditar.add(btnNovoAlfabeto, "flowx,cell 2 0,alignx right");
+		
+		txtAlfabeto = new JTextField();
+		panelEditar.add(txtAlfabeto, "cell 2 0,alignx right");
+		txtAlfabeto.setColumns(10);
 
 //		JPanel panelTransicao = new JPanel();
 //		panelTransicao.setToolTipText("");
@@ -227,6 +193,12 @@ public class GUI {
 
 		JMenuBar menuBar = new JMenuBar();
 		frmManipuladorDeLinguagens.setJMenuBar(menuBar);
+		
+		JMenu mnArquivo = new JMenu("Arquivo");
+		menuBar.add(mnArquivo);
+		
+		JMenuItem mntmHelp = new JMenuItem("Help");
+		mnArquivo.add(mntmHelp);
 	}
 
 	public void setVisible(boolean b) {
