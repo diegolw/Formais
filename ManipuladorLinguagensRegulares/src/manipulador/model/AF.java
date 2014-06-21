@@ -12,7 +12,7 @@ public class AF {
 	private LinkedList<Estado> K = null;		//conjunto não vazio de estados
 	private LinkedList<Terminal> E = null;		//Alfabeto de entrada		
 	private LinkedList<Transicao> MP = null;	//Função de Mapeamento
-	private Estado q0;					//Estado inicial
+	private Estado q0;							//Estado inicial
 	private LinkedList<Estado> F=null;			//Conjunto de Estados Finais
 	
 	protected AF(){
@@ -49,6 +49,34 @@ public class AF {
 		}
 		return removeu;
 		
+	}
+	
+	public LinkedList<Transicao> getTransicoes(Terminal t){
+		LinkedList<Transicao> listaTemp = new LinkedList<Transicao>();
+		Iterator<Transicao> it = MP.iterator();
+		while(it.hasNext()){
+			Transicao tt = it.next();
+			if(tt.getSimbolo().getTerminal() == t.getTerminal())
+				listaTemp.add(tt);
+		}
+			
+		return listaTemp;		
+	}
+	
+	public AF determinizar(){
+		LinkedList<EstadoND[]> estadosDeterminizados = new LinkedList<EstadoND[]>();
+		LinkedList<EstadoND> tratar = new LinkedList<EstadoND>();
+		EstadoND aux = new EstadoND();
+		aux.addEstado(this.q0);
+		tratar.add(aux);
+		while (!tratar.isEmpty()){
+			EstadoND[] novo = new EstadoND[E.size()+1]; 
+			novo[0] = tratar.pop();
+			estadosDeterminizados.add(novo);
+			//continuar aqui
+		}
+		AF ret = new AF();
+		return ret;
 	}
 	
 	public LinkedList<Estado> getK() {
