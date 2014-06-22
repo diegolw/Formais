@@ -4,10 +4,10 @@ import java.util.List;
 
 public class Gramatica {
 	
-	public List<Simbolo> Vn = null;
+	public List<Estado> Vn = null;
 	public List<Terminal> Vt = null;
-	public List<Producao> P = null;
-	public Simbolo S;
+	public List<Transicao> P = null;
+	public Estado S;
 
 	/**
 	 * 
@@ -16,8 +16,8 @@ public class Gramatica {
 	 * @param P, produções
 	 * @param S, símbolo inicial
 	 */
-	public Gramatica(List<Simbolo> Vn, List<Terminal> Vt,
-			List<Producao> P, Simbolo S) {
+	public Gramatica(List<Estado> Vn, List<Terminal> Vt,
+			List<Transicao> P, Estado S) {
 		this.Vn = Vn;
 		this.Vt = Vt;
 		this.P = P;
