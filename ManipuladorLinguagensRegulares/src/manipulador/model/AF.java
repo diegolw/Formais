@@ -1,13 +1,16 @@
 package manipulador.model;
 
+import java.io.Serializable;
 import java.util.LinkedList;
 import java.util.Iterator;
+
+import javax.swing.JOptionPane;
 
 import manipulador.model.gramatica.Estado;
 import manipulador.model.gramatica.Terminal;
 import manipulador.model.gramatica.Transicao;
 
-public class AF {
+public class AF implements Serializable{
 	private String nome;
 	private LinkedList<Estado> K = null;		//conjunto não vazio de estados
 	private LinkedList<Terminal> E = null;		//Alfabeto de entrada		
@@ -15,32 +18,51 @@ public class AF {
 	private Estado q0;							//Estado inicial
 	private LinkedList<Estado> F=null;			//Conjunto de Estados Finais
 	
-	protected AF(){
-		 K = null;		
-		 E = null;				
-		 MP = null;	
-		 q0 =null;	
-		 F=null;
-		
+	public AF(){
+		 K = new LinkedList<Estado>();		
+		 E = new LinkedList<Terminal>();				
+		 MP = new LinkedList<Transicao>();	
+		 q0 = null;	
+		 F = new LinkedList<Estado>();				
 	}
-	protected AF(LinkedList<Estado> _K, LinkedList<Terminal> _E, LinkedList<Transicao> _MP,Estado _q0,LinkedList<Estado> _F){
-		 K = _K;		
+	public AF(String _nome,LinkedList<Estado> _K, LinkedList<Terminal> _E, LinkedList<Transicao> _MP,Estado _q0,LinkedList<Estado> _F){
+		nome = _nome;
+		K = _K;		
 		 E = _E;				
 		 MP =_MP;	
 		 q0 =_q0;	
 		 F= _F;		
 	}
+
 	
 	public void addEstado(Estado _est){
-		K.add(_est);
+        if (!existeEstado(_est.getEstado())) {
+        	K.add(_est);
+        } else {
+            String nomeEst = _est.getEstado();
+            while (existeEstado(nomeEst)) {
+                nomeEst += "\'";
+            }
+            _est.setEstado(nomeEst);
+            K.add(_est);
+        }
 	}
+	
+    public boolean existeEstado(String n) {
+        	Estado e = getEstado(n);
+            if (e.getEstado() == n) {
+                return true;
+            }
+        return false;
+    }
+	
 	public boolean removeEstado(Estado _est){
 		Iterator<Estado> it;
 		boolean removeu = false;
 		if(_est!=null){
 			 it = K.iterator();
 			 while (it.hasNext()) {
-		            //it.next().removeTransicoesParaOEstado(e);
+		            it.next().removeTransicoesParaOEstado(_est);
 		        }
 				removeu = K.remove(_est);
 		        if (_est == q0) {
@@ -51,34 +73,201 @@ public class AF {
 		
 	}
 	
-	public LinkedList<Transicao> getTransicoes(Terminal t){
-		LinkedList<Transicao> listaTemp = new LinkedList<Transicao>();
-		Iterator<Transicao> it = MP.iterator();
-		while(it.hasNext()){
-			Transicao tt = it.next();
-			if(tt.getSimbolo().getTerminal() == t.getTerminal())
-				listaTemp.add(tt);
-		}
-			
-		return listaTemp;		
-	}
+    public boolean ehDeterministico() {
+        Iterator<Estado> it = K.iterator();
+        while (it.hasNext()) {
+            Estado e = it.next();
+            for (int i = 0; i < E.size(); i++) {
+                Transicao[] ts = e.getTransicoes(E.get(i));
+                if (ts.length > 1) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 	
-	public AF determinizar(){
-		LinkedList<EstadoND[]> estadosDeterminizados = new LinkedList<EstadoND[]>();
-		LinkedList<EstadoND> tratar = new LinkedList<EstadoND>();
-		EstadoND aux = new EstadoND();
-		aux.addEstado(this.q0);
-		tratar.add(aux);
-		while (!tratar.isEmpty()){
-			EstadoND[] novo = new EstadoND[E.size()+1]; 
-			novo[0] = tratar.pop();
-			estadosDeterminizados.add(novo);
-			//continuar aqui
-		}
-		AF ret = new AF();
-		return ret;
-	}
-	
+//	public AF determinizar(){
+//		if (q0 == null) {
+//            return null;
+//        }
+//		
+//		LinkedList<EstadoND[]> estadosDeterminizados = new LinkedList<EstadoND[]>();
+//		LinkedList<EstadoND> tratar = new LinkedList<EstadoND>();
+//		EstadoND aux = new EstadoND();
+//		aux.addEstado(this.q0);
+//		tratar.push(aux);
+//		while (!tratar.isEmpty()){
+//			EstadoND[] novo = new EstadoND[E.size()+1]; 
+//			novo[0] = tratar.pop();
+//			if(novo[0].getEstados().size()>0)
+//			estadosDeterminizados.add(novo);
+//			tratarLinha(estadosDeterminizados, novo, tratar);
+//		}
+//        AF automatoDeterminizado = new AF();
+//        automatoDeterminizado.setNome(nome + " determinizado");
+//        automatoDeterminizado.setE(E);
+//
+//        Iterator<EstadoND[]> itLinhaDaTabela = estadosDeterminizados.iterator();
+//        int cont = 0;
+//        while (itLinhaDaTabela.hasNext()) {
+//            Estado novoEstadoDeterminizado = new Estado("q" + cont, automatoDeterminizado);
+//            automatoDeterminizado.K.add(novoEstadoDeterminizado);
+//            itLinhaDaTabela.next()[0].setEstadoAssociado(novoEstadoDeterminizado);
+//            cont++;
+//        }
+//
+//        itLinhaDaTabela = estadosDeterminizados.iterator();
+//        while (itLinhaDaTabela.hasNext()) {
+//            EstadoND[] linha = itLinhaDaTabela.next();
+//            for (int i = 0; i < E.size(); i++) {
+//                automatoDeterminizado.addTransicao(linha[0].getOrigemIndeterminizacao(), linha[i + 1].getOrigemIndeterminizacao(), E.get(i).getTerminal());
+//            }
+//
+//        }
+//		AF ret = new AF();
+//		return ret;
+//	}
+//	
+//    private void tratarLinha(LinkedList<EstadoND[]> estadosDeterminizados, EstadoND[] novo, LinkedList<EstadoND> tratar) {
+//
+//        for (int i = 1; i < novo.length; i++) {
+//            novo[i] = new EstadoND();
+//            Estado[] estadosInclusosDoEstadoDeterminizado = novo[0].getEstadosInclusos();
+//		            if(estadosInclusosDoEstadoDeterminizado.length >1)
+//		            JOptionPane.showMessageDialog(null,"Estados inclusos "+estadosInclusosDoEstadoDeterminizado.length+" Estado:"+estadosInclusosDoEstadoDeterminizado[0].getEstado()+"Estado: "+estadosInclusosDoEstadoDeterminizado[1].getEstado());
+//		            else
+//		            JOptionPane.showMessageDialog(null,"Estados inclusos "+estadosInclusosDoEstadoDeterminizado.length+" Estado:"+estadosInclusosDoEstadoDeterminizado[0].getEstado());
+//            for (int j = 0; j < estadosInclusosDoEstadoDeterminizado.length; j++) {
+//                Estado estadoInclusoDoEstadoDeterminizado = estadosInclusosDoEstadoDeterminizado[j];
+//                LinkedList<Transicao> transicoesDoEstadoIncluso = estadoInclusoDoEstadoDeterminizado.getTransicoes(E.get(i - 1));
+//                for (int k = 0; k < transicoesDoEstadoIncluso.size(); k++) {
+//                    novo[i].addEstado(transicoesDoEstadoIncluso.get(k).getDestino());
+//                }
+//            }
+//
+//            EstadoND novoEstadoDeterminizado = getEstadoDeterminizadoDaTabela(novo[i], estadosDeterminizados);
+//            if (novoEstadoDeterminizado != null) {
+//                novo[i] = novoEstadoDeterminizado;
+//            } else {
+//                novoEstadoDeterminizado = getEstadoDeterminizadoDosNaoTratados(novo[i], tratar);
+//                if (novoEstadoDeterminizado != null) {
+//                    novo[i] = novoEstadoDeterminizado;
+//                } else {
+//                	tratar.push(novo[i]);
+//                }
+//            }
+//
+//        }
+//    }
+//    
+
+
+
+    public AF determinizar() {
+
+//        if (ehDeterministico()) {
+//            return clone();
+//        }
+
+        if (q0 == null) {
+            return null;
+        }
+
+        LinkedList<EstadoND[]> tabelaDeEstadosDeterminizados = new LinkedList<EstadoND[]>();
+        LinkedList<EstadoND> estadosDeterminizadosParaTratar = new LinkedList<EstadoND>();
+        estadosDeterminizadosParaTratar.push(new EstadoND(q0));
+
+        while (!estadosDeterminizadosParaTratar.isEmpty()) {
+            EstadoND[] novaLinha = new EstadoND[E.size() + 1];
+            novaLinha[0] = estadosDeterminizadosParaTratar.pop();
+            tabelaDeEstadosDeterminizados.add(novaLinha);
+            tratarLinha(tabelaDeEstadosDeterminizados, novaLinha, estadosDeterminizadosParaTratar);
+        }
+
+        AF automatoDeterminizado = new AF();
+        automatoDeterminizado.setNome(nome + " determinizado");
+        automatoDeterminizado.setE(E);
+
+        Iterator<EstadoND[]> itLinhaDaTabela = tabelaDeEstadosDeterminizados.iterator();
+        int cont = 0;
+        while (itLinhaDaTabela.hasNext()) {
+            Estado novoEstadoDeterminizado = new Estado("q" + cont, automatoDeterminizado);
+            automatoDeterminizado.K.add(novoEstadoDeterminizado);
+            itLinhaDaTabela.next()[0].setEstadoAssociado(novoEstadoDeterminizado);
+            cont++;
+        }
+
+        itLinhaDaTabela = tabelaDeEstadosDeterminizados.iterator();
+        while (itLinhaDaTabela.hasNext()) {
+            EstadoND[] linha = itLinhaDaTabela.next();
+            for (int i = 0; i < E.size(); i++) {
+                automatoDeterminizado.addTransicao(linha[0].getOrigemIndeterminizacao(), linha[i + 1].getOrigemIndeterminizacao(), E.get(i).getTerminal());
+            }
+
+        }
+
+        return automatoDeterminizado;
+    }
+
+    private void tratarLinha(LinkedList<EstadoND[]> tabelaDeEstadosDeterminizados, EstadoND[] novaLinha, LinkedList<EstadoND> estadosDeterminizadosParaTratar) {
+
+        for (int i = 1; i < novaLinha.length; i++) {
+            novaLinha[i] = new EstadoND();
+            Estado[] estadosInclusosDoEstadoDeterminizado = novaLinha[0].getEstadosInclusos();
+            for (int j = 0; j < estadosInclusosDoEstadoDeterminizado.length; j++) {
+                Estado estadoInclusoDoEstadoDeterminizado = estadosInclusosDoEstadoDeterminizado[j];
+                Transicao[] transicoesDoEstadoIncluso = estadoInclusoDoEstadoDeterminizado.getTransicoes(E.get(i-1));
+                for (int k = 0; k < transicoesDoEstadoIncluso.length; k++) {
+                    novaLinha[i].addEstado(transicoesDoEstadoIncluso[k].getDestino());
+                }
+
+            }
+
+            EstadoND novoEstadoDeterminizado = getEstadoDeterminizadoDaTabela(novaLinha[i], tabelaDeEstadosDeterminizados);
+            if (novoEstadoDeterminizado != null) {
+                novaLinha[i] = novoEstadoDeterminizado;
+            } else {
+                novoEstadoDeterminizado = getEstadoDeterminizadoDosNaoTratados(novaLinha[i], estadosDeterminizadosParaTratar);
+                if (novoEstadoDeterminizado != null) {
+                    novaLinha[i] = novoEstadoDeterminizado;
+                } else {
+                    estadosDeterminizadosParaTratar.push(novaLinha[i]);
+                }
+            }
+
+        }
+    }
+    
+  private EstadoND getEstadoDeterminizadoDaTabela(EstadoND novaLinha, LinkedList<EstadoND[]> tabelaDeEstadosDeterminizados) {
+  Iterator<EstadoND[]> it = tabelaDeEstadosDeterminizados.iterator();
+  while (it.hasNext()) {
+  	EstadoND[] estadosAux = it.next();
+      if (estadosAux[0].ehIgual(novaLinha)) {
+          return estadosAux[0];
+      }
+  }
+  return null;
+}
+
+    private EstadoND getEstadoDeterminizadoDosNaoTratados(EstadoND estadoAuxiliar, LinkedList<EstadoND> estadosDeterminizadosParaTratar) {
+        Iterator<EstadoND> it = estadosDeterminizadosParaTratar.iterator();
+        while (it.hasNext()) {
+        	EstadoND eAux = it.next();
+            if (eAux.ehIgual(estadoAuxiliar)) {
+                return eAux;
+            }
+        }
+        return null;
+    }    
+    
+
+    protected void addTransicao(Estado e1, Estado e2, String simbolo) {
+        if (e1 != null && e2 != null) {
+            e1.addTransicao(e2, simbolo);
+        }
+    }
+    	
 	public LinkedList<Estado> getK() {
 		return K;
 	}
@@ -115,5 +304,29 @@ public class AF {
 	public void setQ0(Estado q0) {
 		this.q0 = q0;
 	}
+	
+    public Estado getEstado(String n) {
+        Iterator<Estado> it = K.iterator();
+        while (it.hasNext()) {
+            Estado e = it.next();
+            if (e.getEstado().equals(n)) {
+                return e;
+            }
+        }
+        return null;
+    }
+	
+    public void setEstadoFinal(String s) {
+        Estado e = getEstado(s);
+        if (e != null) {
+            setEstadoFinal(e);
+        }
+    }
+
+    public void setEstadoFinal(Estado e) {
+        e.setFinal(true);
+    }
+    
+
 
 }

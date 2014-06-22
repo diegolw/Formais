@@ -1,39 +1,37 @@
 package manipulador.model.gramatica;
 
-public class Transicao {
+import java.io.Serializable;
+
+public class Transicao implements Serializable{
+	
 	private Estado origem;
 	private Estado destino;
 	private Terminal simbolo;
 	
-	protected Transicao(Estado _ori, Estado _dest, Terminal _simb){
-		setOrigem(_ori);
-		setDestino(_dest);
-		setSimbolo(_simb);
+	public Transicao(Estado _ori, Estado _dest, Terminal _simb){
+		origem = _ori;
+		destino = _dest;
+		simbolo = _simb;
 	}
 	
 	
 	public Estado getOrigem() {
 		return origem;
 	}
-
-	public void setOrigem(Estado origem) {
-		this.origem = origem;
-	}
-
+	
 	public Estado getDestino() {
 		return destino;
 	}
-
-	public void setDestino(Estado destino) {
-		this.destino = destino;
-	}
-
+	
 	public Terminal getSimbolo() {
 		return simbolo;
 	}
-
-	public void setSimbolo(Terminal simbolo) {
-		this.simbolo = simbolo;
+	
+	public String toString(){
+		String s = origem.toString() + " -" + simbolo.toString() + "----> " + destino.toString();
+		return s;
 	}
+	
+
 	
 }

@@ -1,17 +1,18 @@
 package manipulador.model.gramatica;
+import java.lang.String;
 
 public class Terminal {
-	private char terminal;
+	private String terminal;
 	
-	protected Terminal(char _ter){
+	public Terminal(String _ter){
 		setTerminal(_ter);
 	}
 
-	public char getTerminal() {
+	public String getTerminal() {
 		return terminal;
 	}
 
-	public void setTerminal(char terminal) {
+	public void setTerminal(String terminal) {
 		this.terminal = terminal;
 	}
 	
