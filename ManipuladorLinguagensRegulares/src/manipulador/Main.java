@@ -23,11 +23,11 @@ public class Main {
 					Mediator mediator = new Mediator();
 					
 					AF af1= new AF();
+					af1.setNome("AF1");
 					Estado q0 = new Estado("q0",af1);
 					Estado q1 = new Estado("q1",af1);
 					Estado q2 = new Estado("q2",af1);
 					Estado q3 = new Estado("q3",af1);
-					Estado q4 = new Estado("q3",af1);
 					
 					Terminal a = new Terminal("a");
 					Terminal b =new Terminal("b");
@@ -60,29 +60,31 @@ public class Main {
 					af1.setMP(MP);
 					af1.setQ0(q0);
 					af1.setF(F);
-					
 
 					Iterator<Transicao> it = af1.getMP().iterator();
-					String att="";
+					String att="AF1:\n";
 					while(it.hasNext()){
 						Transicao t = it.next();
 						att += "Estado Origem:"+t.getOrigem().getEstado()+" Simbolo:"+t.getSimbolo().getTerminal()+" Estado Destino:"+t.getDestino().getEstado()+"\n";
 					}
-					JOptionPane.showMessageDialog(null, att);
-					
-					String rr = "False";
-					if(af1.ehDeterministico())
-						rr = "true";
-					JOptionPane.showMessageDialog(null, "E Deterministico?"+rr);
+					//JOptionPane.showMessageDialog(null, att);
+					boolean rt = af1.ehDeterministico();
+					att += "\nAF1 e deterministico?"+rt;
 
-					af1.determinizar();
-					it = af1.getMP().iterator();
-					String att2="";
+					
+					AF af2 = af1.determinizar();
+			
+					it = af2.getMP().iterator();
+					att +="\nAF2:\n";
 					while(it.hasNext()){
 						Transicao t = it.next();
-						att2 += "Estado Origem:"+t.getOrigem().getEstado()+" Simbolo:"+t.getSimbolo().getTerminal()+" Estado Destino:"+t.getDestino().getEstado()+"\n";
+						att += "Estado Origem:"+t.getOrigem().getEstado()+" Simbolo:"+t.getSimbolo().getTerminal()+" Estado Destino:"+t.getDestino().getEstado()+"\n";
 					}
-					JOptionPane.showMessageDialog(null, att2);
+					
+					
+					rt = af2.ehDeterministico();
+					att +="\nAF2 e deterministico?"+rt;
+					JOptionPane.showMessageDialog(null, att);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

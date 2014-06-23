@@ -79,18 +79,19 @@ public class Estado implements Serializable{
 		this.transicoes = transicoes;
 	}
 	
-	public Transicao[] getTransicoes(Terminal t){
+	public LinkedList<Transicao> getTransicoes(Terminal s){
 		LinkedList<Transicao> listaTemp = new LinkedList<Transicao>();
 		Iterator<Transicao> it = transicoes.iterator();
-		Transicao[] arrTransicoes = new Transicao[listaTemp.size()];
-		it = listaTemp.iterator();
-		int cont = 0;
+		//JOptionPane.showMessageDialog(null, " transicoes.size:"+transicoes.size());
 		while(it.hasNext()){
-			arrTransicoes[cont] = it.next();
-			cont++;
+			Transicao t = it.next();
+			//JOptionPane.showMessageDialog(null, " Transição:"+t.getOrigem().getEstado()+"->"+t.getSimbolo().getTerminal()+"->"+t.getDestino().getEstado());
+			if(t.getSimbolo().getTerminal() == s.getTerminal()){
+				listaTemp.add(t);
+			}
 		}
-		
-		return arrTransicoes;	
+				
+		return listaTemp;	
 	}
 	
 	public LinkedList<Transicao> getTransicoesParaSiMesmo(){
