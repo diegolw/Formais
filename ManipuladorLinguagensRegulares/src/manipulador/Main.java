@@ -28,7 +28,10 @@ public class Main {
 					Estado q1 = new Estado("q1",af1);
 					Estado q2 = new Estado("q2",af1);
 					Estado q3 = new Estado("q3",af1);
+					Estado morto = new Estado("morto",af1);
+					Estado inalc = new Estado("inalc", af1);
 					
+										
 					Terminal a = new Terminal("a");
 					Terminal b =new Terminal("b");
 					
@@ -38,6 +41,8 @@ public class Main {
 					K.add(q1);
 					K.add(q2);
 					K.add(q3);
+					K.add(inalc);
+					K.add(morto);
 					LinkedList<Terminal> E = new LinkedList<Terminal>();
 					E.add( a);
 					E.add( b);
@@ -50,6 +55,14 @@ public class Main {
 					q0.addTransicao(q0, b.getTerminal());					
 					MP.add(new Transicao(q1,q2,b));
 					q1.addTransicao(q2, b.getTerminal());
+					
+					MP.add(new Transicao(q1,morto,a));
+					q1.addTransicao(morto, a.getTerminal());
+					morto.addTransicao(morto, a.getTerminal());
+					morto.addTransicao(morto, b.getTerminal());
+					MP.add(new Transicao(morto,morto,a));
+					MP.add(new Transicao(morto,morto,b));
+					
 					MP.add(new Transicao(q2,q3,b));
 					q2.addTransicao(q3, b.getTerminal());
 					LinkedList<Estado> F = new LinkedList<Estado>();
@@ -60,31 +73,63 @@ public class Main {
 					af1.setMP(MP);
 					af1.setQ0(q0);
 					af1.setF(F);
+	
 
+					Iterator<Estado> itest = af1.getK().iterator();
+					String acc = "\nEstados de AF1:";
+					while(itest.hasNext()){
+						Estado est = itest.next();
+						acc += "\n "+est.getEstado();
+					}
+					JOptionPane.showMessageDialog(null,acc);
+					
+					af1.eliminarEstadosInalcancaveis();
+					
+					itest = af1.getK().iterator();
+					acc = "\nEstados de AF1 apos eliminar inalcancaveis:";
+					while(itest.hasNext()){
+						Estado est = itest.next();
+						acc += "\n "+est.getEstado();
+					}
+					JOptionPane.showMessageDialog(null,acc);
+					
+					af1.eliminarEstadosMortos();
+					
+					itest = af1.getK().iterator();
+					acc = "\nEstados de AF1 apos eliminar mortos:";
+					while(itest.hasNext()){
+						Estado est = itest.next();
+						acc += "\n "+est.getEstado();
+					}
+					JOptionPane.showMessageDialog(null,acc);
+					
 					Iterator<Transicao> it = af1.getMP().iterator();
-					String att="AF1:\n";
+					String att="\nTransicoes do AF1 apos eliminar mortos:\n";
 					while(it.hasNext()){
 						Transicao t = it.next();
 						att += "Estado Origem:"+t.getOrigem().getEstado()+" Simbolo:"+t.getSimbolo().getTerminal()+" Estado Destino:"+t.getDestino().getEstado()+"\n";
 					}
-					//JOptionPane.showMessageDialog(null, att);
+					
+					JOptionPane.showMessageDialog(null, att);
+					
 					boolean rt = af1.ehDeterministico();
 					att += "\nAF1 e deterministico?"+rt;
 
 					
-					AF af2 = af1.determinizar();
-			
-					it = af2.getMP().iterator();
-					att +="\nAF2:\n";
-					while(it.hasNext()){
-						Transicao t = it.next();
-						att += "Estado Origem:"+t.getOrigem().getEstado()+" Simbolo:"+t.getSimbolo().getTerminal()+" Estado Destino:"+t.getDestino().getEstado()+"\n";
-					}
+						AF af2 = af1.determinizar();
+				
+						it = af2.getMP().iterator();
+						att +="\nTransicoes do AF2:\n";
+						while(it.hasNext()){
+							Transicao t = it.next();
+							att += "Estado Origem:"+t.getOrigem().getEstado()+" Simbolo:"+t.getSimbolo().getTerminal()+" Estado Destino:"+t.getDestino().getEstado()+"\n";
+						}
+						
+						
+						rt = af2.ehDeterministico();
+						att +="\nAF2 e deterministico?"+rt;
+						JOptionPane.showMessageDialog(null, att);
 					
-					
-					rt = af2.ehDeterministico();
-					att +="\nAF2 e deterministico?"+rt;
-					JOptionPane.showMessageDialog(null, att);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

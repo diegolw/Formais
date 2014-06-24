@@ -79,7 +79,7 @@ public class AF implements Serializable{
             Estado e = it.next();
             for (int i = 0; i < E.size(); i++) {
             	LinkedList<Transicao> ts = e.getTransicoes(E.get(i));
-                if (ts.size() != 1) {
+                if (ts.size() > 1) {
                     return false;
                 }
             }
@@ -88,6 +88,10 @@ public class AF implements Serializable{
     }
 	
 	public AF determinizar(){
+		if(this.ehDeterministico()){
+			JOptionPane.showMessageDialog(null, "Nao determ.");
+			return new AF();
+		}
 		if (q0 == null) {
             return null;
         }
@@ -103,11 +107,12 @@ public class AF implements Serializable{
 			if(novo[0].getEstados().size()>0)
 				estadosDeterminizados.add(novo);
 			tratarLinha(estadosDeterminizados, novo, tratar);
+			
 		}
         AF automatoDeterminizado = new AF();
         automatoDeterminizado.setNome(nome + " determinizado");
         automatoDeterminizado.setE(E);
-
+        
         Iterator<EstadoND[]> itLinhaDaTabela = estadosDeterminizados.iterator();
         int cont = 0;
         while (itLinhaDaTabela.hasNext()) {
@@ -121,7 +126,6 @@ public class AF implements Serializable{
             EstadoND[] linha = itLinhaDaTabela.next();
             for (int i = 0; i < E.size(); i++) {
                 automatoDeterminizado.addTransicao(linha[0].getOrigemIndeterminizacao(), linha[i + 1].getOrigemIndeterminizacao(), E.get(i).getTerminal());
-                //JOptionPane.showMessageDialog(null, "AutomatoDeterminizado add transicao: Origem"+linha[0].getOrigemIndeterminizacao().getEstado()+"->"+E.get(i).getTerminal()+"->"+linha[i+1].getOrigemIndeterminizacao().getEstado());
             }
         }		
 		return automatoDeterminizado;
@@ -182,6 +186,99 @@ public class AF implements Serializable{
             e1.addTransicao(e2, simbolo);
             this.MP.add(new Transicao(e1,e2, new Terminal(simbolo)));
         }
+    }
+    
+    public void eliminarEstadosInalcancaveis() {
+    	
+        LinkedList<Estado> visitar = new LinkedList<Estado>();
+        LinkedList<Estado> alcancaveis = new LinkedList<Estado>();
+        LinkedList<Transicao> trans = new LinkedList<Transicao>();
+        visitar.push(q0);
+        
+        while(!visitar.isEmpty()){
+        	Estado est = visitar.pop();
+        	alcancaveis.add(est);
+        	Iterator<Transicao> tra = est.getTransicoes().iterator();
+        	while(tra.hasNext()){
+        		Transicao transicoes = tra.next();
+        		trans.add(transicoes);
+        		Estado destino = transicoes.getDestino();
+        		if(!visitar.contains(destino) && !alcancaveis.contains(destino)){
+        			visitar.add(destino);
+        		}        		
+        	}
+        }
+        K = alcancaveis;
+        MP = trans;
+    }
+    
+    public void eliminarEstadosMortos(){
+    	boolean efinal = false;
+    	LinkedList<Estado> vivos = new LinkedList<Estado>();
+    	LinkedList<Transicao> transicoes = new LinkedList<Transicao>();
+    	Iterator<Estado> iit = K.iterator();
+    	while(iit.hasNext()){
+    		efinal=false;
+    		Estado e = iit.next();
+            if (F.contains(e)) {
+                vivos.push(e);
+                efinal = true;
+            } else {
+                if (alcancaFinal(e)) {
+                    vivos.add(e);
+                    efinal = true;                    
+                }
+            }
+            if(efinal){
+            	Iterator<Transicao> itt = e.getTransicoes().iterator();
+                while(itt.hasNext()){
+                	Transicao t = itt.next();
+                	transicoes.push(t);
+                }
+            }
+            else{
+            	Iterator<Transicao> itt = e.getTransicoes().iterator();
+                while(itt.hasNext()){
+                	Transicao t = itt.next();
+                	MP.remove(t);
+                }
+                removerTransicoesPara(e);            	
+            }
+                        
+        }
+    	
+    	K = vivos;
+    	MP = transicoes;
+}
+    
+    
+    public boolean alcancaFinal(Estado e){
+    	LinkedList<Estado> visitar = new LinkedList<Estado>();    	
+		LinkedList<Estado> jaVisitado = new LinkedList<Estado>();
+		visitar.push(e);
+    	while(!visitar.isEmpty()){
+    		Estado est = visitar.pop();
+    		if(F.contains(est)){
+    			return true;
+    		}
+    		jaVisitado.push(est);
+    		Iterator<Transicao> itr = est.getTransicoes().iterator();
+    		while(itr.hasNext()){
+    			Transicao tr = itr.next();
+    			Estado destino = tr.getDestino();
+    			if(!visitar.contains(destino) && !jaVisitado.contains(destino))
+    				visitar.push(destino);
+    		}
+    		
+    	}
+    	return false;
+    }
+    public void removerTransicoesPara(Estado e){
+    	Iterator<Estado> ite = K.iterator();
+    	while(ite.hasNext()){
+    		Estado es = ite.next();
+			es.removeTransicoesParaOEstado(e);
+    	}
     }
     	
 	public LinkedList<Estado> getK() {
