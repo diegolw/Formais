@@ -67,6 +67,7 @@ public class Main {
 					q2.addTransicao(q3, b.getTerminal());
 					LinkedList<Estado> F = new LinkedList<Estado>();
 					F.add(q3);
+					q3.setFinal(true);
 					af1.setNome("AF1");
 					af1.setK(K);
 					af1.setE(E);
@@ -74,11 +75,22 @@ public class Main {
 					af1.setQ0(q0);
 					af1.setF(F);
 	
-
+										
 					Iterator<Estado> itest = af1.getK().iterator();
+					while(itest.hasNext()){
+						Estado est = itest.next();
+						if(est.isFinal())
+							est.setEstado("*"+est.getEstado()); 
+						else if(est == af1.getQ0())
+							est.setEstado("->"+est.getEstado());
+					}
+					
+
+					 itest = af1.getK().iterator();
 					String acc = "\nEstados de AF1:";
 					while(itest.hasNext()){
 						Estado est = itest.next();
+						
 						acc += "\n "+est.getEstado();
 					}
 					JOptionPane.showMessageDialog(null,acc);
@@ -116,16 +128,17 @@ public class Main {
 
 					
 						AF af2 = af1.determinizar();
-				
+						af2.getQ0().setEstado("->"+af2.getQ0().getEstado());
 						it = af2.getMP().iterator();
-						att +="\nTransicoes do AF2:\n";
+						att +="\nTransicoes do "+af2.getNome();
 						while(it.hasNext()){
 							Transicao t = it.next();
-							att += "Estado Origem:"+t.getOrigem().getEstado()+" Simbolo:"+t.getSimbolo().getTerminal()+" Estado Destino:"+t.getDestino().getEstado()+"\n";
+							att += "\nEstado Origem:"+t.getOrigem().getEstado()+" Simbolo:"+t.getSimbolo().getTerminal()+" Estado Destino:"+t.getDestino().getEstado();
 						}
 						
 						
-						rt = af2.ehDeterministico();
+						rt = af2.ehDeterministico();						
+
 						att +="\nAF2 e deterministico?"+rt;
 						JOptionPane.showMessageDialog(null, att);
 					

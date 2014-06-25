@@ -89,27 +89,28 @@ public class AF implements Serializable{
 	
 	public AF determinizar(){
 		if(this.ehDeterministico()){
-			JOptionPane.showMessageDialog(null, "Nao determ.");
 			return new AF();
 		}
 		if (q0 == null) {
-            return null;
+            return null;		//Retornar erro 
         }
-		
+		AF automatoDeterminizado = new AF();
 		LinkedList<EstadoND[]> estadosDeterminizados = new LinkedList<EstadoND[]>();
 		LinkedList<EstadoND> tratar = new LinkedList<EstadoND>();
 		EstadoND aux = new EstadoND();
 		aux.addEstado(this.q0);
+		aux.setInicial(true);
 		tratar.push(aux);
 		while (!tratar.isEmpty()){
 			EstadoND[] novo = new EstadoND[E.size()+1]; 
 			novo[0] = tratar.pop();
-			if(novo[0].getEstados().size()>0)
+			if(novo[0].getEstados().size()>0){
 				estadosDeterminizados.add(novo);
+			}
 			tratarLinha(estadosDeterminizados, novo, tratar);
 			
 		}
-        AF automatoDeterminizado = new AF();
+        
         automatoDeterminizado.setNome(nome + " determinizado");
         automatoDeterminizado.setE(E);
         
@@ -118,7 +119,18 @@ public class AF implements Serializable{
         while (itLinhaDaTabela.hasNext()) {
             Estado novoEstadoDeterminizado = new Estado("q" + cont, automatoDeterminizado);
             automatoDeterminizado.K.add(novoEstadoDeterminizado);
-            itLinhaDaTabela.next()[0].setEstadoAssociado(novoEstadoDeterminizado);
+            EstadoND[] next =  itLinhaDaTabela.next();
+            next[0].setEstadoAssociado(novoEstadoDeterminizado);
+            LinkedList<Estado> estConfere = next[0].getEstados();
+            Iterator<Estado> ittte = estConfere.iterator();
+            while(ittte.hasNext()){
+            	Estado e = ittte.next();
+            	if(e.isFinal()){
+            		novoEstadoDeterminizado.setFinal(true); 
+            		novoEstadoDeterminizado.setEstado("*"+novoEstadoDeterminizado.getEstado());
+            	}
+            	            	
+            }
             cont++;
         }
         itLinhaDaTabela = estadosDeterminizados.iterator();
@@ -242,7 +254,6 @@ public class AF implements Serializable{
                 while(itt.hasNext()){
                 	Transicao t = itt.next();
                 	MP.remove(t);
-                	//e.removeTransicoesParaOEstado(t.getDestino());
                 }
                 removerTransicoesPara(e);            	
             }

@@ -8,6 +8,7 @@ import java.util.LinkedList;
 public class EstadoND {						// A-> aX | aY
 	private LinkedList<Estado> estados;		// == <X,Y>
 	private Estado origemIndeterminizacao; //  == A 
+	private boolean inicial; 
 	
 	protected EstadoND() {
 		estados = new LinkedList<Estado>();
@@ -101,6 +102,14 @@ public class EstadoND {						// A-> aX | aY
 
 	public void setOrigemIndeterminizacao(Estado origemIndeterminizacao) {
 		this.origemIndeterminizacao = origemIndeterminizacao;
+	}
+
+	public boolean isInicial() {
+		return inicial;
+	}
+
+	public void setInicial(boolean inicial) {
+		this.inicial = inicial;
 	}
 
 }
