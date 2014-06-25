@@ -217,6 +217,7 @@ public class AF implements Serializable{
     	LinkedList<Estado> vivos = new LinkedList<Estado>();
     	LinkedList<Transicao> transicoes = new LinkedList<Transicao>();
     	Iterator<Estado> iit = K.iterator();
+    	
     	while(iit.hasNext()){
     		efinal=false;
     		Estado e = iit.next();
@@ -225,27 +226,29 @@ public class AF implements Serializable{
                 efinal = true;
             } else {
                 if (alcancaFinal(e)) {
-                    vivos.add(e);
+                    vivos.push(e);
                     efinal = true;                    
                 }
             }
-            if(efinal){
-            	Iterator<Transicao> itt = e.getTransicoes().iterator();
+            Iterator<Transicao> itt = e.getTransicoes().iterator();
+            if(efinal){            	
                 while(itt.hasNext()){
                 	Transicao t = itt.next();
-                	transicoes.push(t);
+                	if(alcancaFinal(t.getDestino()))
+                		transicoes.push(t);
                 }
             }
             else{
-            	Iterator<Transicao> itt = e.getTransicoes().iterator();
                 while(itt.hasNext()){
                 	Transicao t = itt.next();
                 	MP.remove(t);
+                	//e.removeTransicoesParaOEstado(t.getDestino());
                 }
                 removerTransicoesPara(e);            	
             }
                         
         }
+    	
     	
     	K = vivos;
     	MP = transicoes;

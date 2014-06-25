@@ -108,8 +108,7 @@ public class Main {
 					while(it.hasNext()){
 						Transicao t = it.next();
 						att += "Estado Origem:"+t.getOrigem().getEstado()+" Simbolo:"+t.getSimbolo().getTerminal()+" Estado Destino:"+t.getDestino().getEstado()+"\n";
-					}
-					
+					}					
 					JOptionPane.showMessageDialog(null, att);
 					
 					boolean rt = af1.ehDeterministico();

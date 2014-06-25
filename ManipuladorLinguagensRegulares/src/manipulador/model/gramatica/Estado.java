@@ -75,8 +75,8 @@ public class Estado implements Serializable{
 		return transicoes;
 	}
 
-	public void setTransicoes(LinkedList<Transicao> transicoes) {
-		this.transicoes = transicoes;
+	public void setTransicoes(LinkedList<Transicao> _transicoes) {
+		this.transicoes = _transicoes;
 	}
 	
 	public LinkedList<Transicao> getTransicoes(Terminal s){
@@ -136,20 +136,15 @@ public class Estado implements Serializable{
 	}
 	
 	public void removeTransicoesParaOEstado(Estado e) {
-		JOptionPane.showMessageDialog(null, "estado atual eliminando trasicoes:"+this.getEstado());
 		LinkedList<Transicao> ts = getTransicoes();
 		LinkedList<Transicao> ret = new LinkedList<Transicao>();
 		for(int i = 0 ; i < ts.size() ; i++){
-			JOptionPane.showMessageDialog(null, "este é igual a morto??"+ts.get(i).getDestino().getEstado());
 			if(ts.get(i).getDestino().getEstado() != e.getEstado()){
 				ret.push(ts.get(i));
-				//transicoes.remove(ts.get(i));
 			}
-			else
-				JOptionPane.showMessageDialog(null, "este é igual a morto->"+ts.get(i).getDestino().getEstado());
 		}
-		transicoes = ret;
-		
+		setTransicoes(ret);
+				
 	}
 	
 	public String toString(){
