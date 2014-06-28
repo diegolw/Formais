@@ -2,34 +2,28 @@ package manipulador.view;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.swing.AbstractButton;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JComboBox;
 import javax.swing.JFrame;
-import javax.swing.JList;
+import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.border.TitledBorder;
-import javax.swing.event.TableModelListener;
 import javax.swing.table.DefaultTableModel;
 
-import manipulador.model.af.Automato;
 import net.miginfocom.swing.MigLayout;
-
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 
 public class GUI {
 
@@ -40,12 +34,15 @@ public class GUI {
 
 	private DefaultTableModel modeloAF1 = null;
 	private DefaultTableModel modeloAF2 = null;
+	private DefaultTableModel modeloResultado = null;
 	private DefaultTableModel model;
 	private JTable jTable1;
 	private JTable jTable2;
+	private JTable jTableResultado;
+	private JScrollPane scrollPaneResultado;
 
-	private JRadioButton rdbtnAutmato1;
-	private JRadioButton rdbtnAutmato2;
+	public JRadioButton rdbtnAutmato1;
+	public JRadioButton rdbtnAutmato2;
 
 	/**
 	 * Create the application.
@@ -120,7 +117,8 @@ public class GUI {
 				TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		frmManipuladorDeLinguagens.getContentPane().add(panelOperacoes,
 				"cell 2 0 1 3,grow");
-		panelOperacoes.setLayout(new MigLayout("", "[]", "[][][][][][][][][]"));
+		panelOperacoes.setLayout(new MigLayout("", "[]",
+				"[][][][][][][][][][][][][]"));
 
 		JButton btnMinimizar = new JButton("Minimizar");
 		btnMinimizar.addActionListener(new ActionListener() {
@@ -130,32 +128,97 @@ public class GUI {
 				}
 			}
 		});
-		panelOperacoes.add(btnMinimizar, "cell 0 0,growx");
+
+		JButton btnGramtica = new JButton("Gramática");
+		btnGramtica.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				for (IGUI listener : listeners) {
+					listener.gramatica();
+				}
+			}
+		});
+		panelOperacoes.add(btnGramtica, "cell 0 0,growx");
+
+		JButton btnExpressoRegular = new JButton("Expressão Regular");
+		btnExpressoRegular.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				for (IGUI listener : listeners) {
+					listener.expressaoRegular();
+				}
+			}
+		});
+		panelOperacoes.add(btnExpressoRegular, "cell 0 1,growx");
+		panelOperacoes.add(btnMinimizar, "cell 0 2,growx");
 
 		JButton btnComplemento = new JButton("Complemento");
-		panelOperacoes.add(btnComplemento, "cell 0 1,growx");
+		btnComplemento.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				for (IGUI listener : listeners) {
+					listener.complemento();
+				}
+			}
+		});
+		panelOperacoes.add(btnComplemento, "cell 0 3,growx");
 
 		JButton btnLL_1 = new JButton("L1 ∩ L2");
-		panelOperacoes.add(btnLL_1, "cell 0 3,growx");
+		btnLL_1.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				for (IGUI listener : listeners) {
+					listener.interseccao();
+				}
+			}
+		});
+		panelOperacoes.add(btnLL_1, "cell 0 5,growx");
 
 		JButton btnLL_2 = new JButton("L1 ∪ L2");
-		panelOperacoes.add(btnLL_2, "cell 0 4,growx");
+		btnLL_2.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				for (IGUI listener : listeners) {
+					listener.uniao();
+				}
+			}
+		});
+		panelOperacoes.add(btnLL_2, "cell 0 6,growx");
 
 		JButton btnLL = new JButton("L1 = L2?");
-		panelOperacoes.add(btnLL, "cell 0 2,growx");
+		btnLL.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				for (IGUI listener : listeners) {
+					listener.igualdade();
+				}
+			}
+		});
+		panelOperacoes.add(btnLL, "cell 0 4,growx");
 
 		JButton btnReverso = new JButton("Reverso");
-		panelOperacoes.add(btnReverso, "cell 0 5,growx");
+		btnReverso.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				for (IGUI listener : listeners) {
+					listener.reverso();
+				}
+			}
+		});
+		panelOperacoes.add(btnReverso, "cell 0 7,growx");
 
 		JButton btnEnumerar = new JButton("Enumerar");
-		panelOperacoes.add(btnEnumerar, "cell 0 6,growx");
+		btnEnumerar.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				String retorno = JOptionPane
+						.showInputDialog("Com quantos símbolos?");
+				int numero = Integer.parseInt(retorno);
+				for (IGUI listener : listeners) {
+					listener.enumerar(numero);
+				}
+			}
+		});
+		panelOperacoes.add(btnEnumerar, "cell 0 8,growx");
 
 		JButton btnVazia = new JButton("Vazia, infinita ou finita?");
 		btnVazia.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 			}
 		});
-		panelOperacoes.add(btnVazia, "cell 0 7,growx");
+		panelOperacoes.add(btnVazia, "cell 0 9,growx");
 
 		JButton btnValidar = new JButton("Validar");
 		btnValidar.addActionListener(new ActionListener() {
@@ -163,7 +226,17 @@ public class GUI {
 				validar();
 			}
 		});
-		panelOperacoes.add(btnValidar, "cell 0 8,growx");
+		panelOperacoes.add(btnValidar, "cell 0 10,growx");
+
+		JButton btnTest = new JButton("Teste");
+		btnTest.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				for (IGUI l : listeners) {
+					l.testar();
+				}
+			}
+		});
+		panelOperacoes.add(btnTest, "cell 0 11,growx");
 
 		JPanel panelEditar = new JPanel();
 		panelEditar.setBorder(new TitledBorder(null, "Editar",
@@ -227,34 +300,6 @@ public class GUI {
 		panelEditar.add(txtAlfabeto, "cell 2 0,alignx right");
 		txtAlfabeto.setColumns(10);
 
-		// JPanel panelTransicao = new JPanel();
-		// panelTransicao.setToolTipText("");
-		// panelTransicao.setBorder(new TitledBorder(null,
-		// "Transi\u00E7\u00E3o",
-		// TitledBorder.LEADING, TitledBorder.TOP, null, null));
-		// panelEditar.add(panelTransicao, "cell 0 2 4 1,grow");
-		// panelTransicao
-		// .setLayout(new MigLayout("", "[grow][grow][grow][]", "[]"));
-		//
-		// JComboBox comboBoxOrigem = new JComboBox();
-		// panelTransicao.add(comboBoxOrigem, "cell 0 0,growx");
-		//
-		// JComboBox comboBoxDestino = new JComboBox();
-		// panelTransicao.add(comboBoxDestino, "flowx,cell 1 0,growx");
-		//
-		// JComboBox comboBoxSimbolo = new JComboBox();
-		// panelTransicao.add(comboBoxSimbolo, "flowx,cell 2 0,growx");
-		//
-		// JButton btnAdicionarTrans = new JButton("Adicionar");
-		// btnAdicionarTrans.addActionListener(new ActionListener() {
-		// public void actionPerformed(ActionEvent e) {
-		// for (IGUI listener : listeners) {
-		// listener.adicionarTransicao();
-		// }
-		// }
-		// });
-		// panelTransicao.add(btnAdicionarTrans, "cell 3 0");
-
 		JPanel panelResultado = new JPanel();
 		panelResultado.setBorder(new TitledBorder(null, "Resultado",
 				TitledBorder.LEADING, TitledBorder.TOP, null, null));
@@ -263,11 +308,8 @@ public class GUI {
 		panelResultado
 				.setLayout(new MigLayout("", "[grow][3px]", "[grow][3px]"));
 
-		JScrollPane scrollPaneResultado = new JScrollPane();
+		scrollPaneResultado = new JScrollPane();
 		panelResultado.add(scrollPaneResultado, "cell 0 0,grow");
-
-		JList listResultado = new JList();
-		scrollPaneResultado.setViewportView(listResultado);
 
 		JMenuBar menuBar = new JMenuBar();
 		frmManipuladorDeLinguagens.setJMenuBar(menuBar);
@@ -280,6 +322,11 @@ public class GUI {
 	}
 
 	private void validar() {
+		String[] alfabeto = getAlfabeto();
+		for (IGUI listener : listeners) {
+			listener.setAlfabeto(alfabeto);
+		}
+
 		ArrayList<String> estados = getEstados();
 		String[][] producoes = new String[estados.size()][model
 				.getColumnCount()];
@@ -295,6 +342,7 @@ public class GUI {
 					} else if (nTerminal.contains("*")) {
 						nTerminal = nTerminal.replace("*", "");
 					}
+					nTerminal = nTerminal.trim();
 					boolean upperFound = false;
 					for (char c : nTerminal.toCharArray()) {
 						if (!Character.isUpperCase(c)) {
@@ -303,12 +351,13 @@ public class GUI {
 						}
 					}
 					if (upperFound) {
+						System.err.println(nTerminal);
 						JOptionPane
 								.showMessageDialog(null,
 										"Bah.. Que tal usar apenas letras maíscula como estados?");
 						return;
 					}
-					producao[0] = nTerminal;
+					producao[j] = nTerminal;
 
 					if (!estados.contains(nTerminal)) {
 						estadosInvalidos.add(nTerminal);
@@ -327,17 +376,29 @@ public class GUI {
 				naoTerminais += estadosInvalidos.get(k) + ", ";
 			}
 			JOptionPane.showMessageDialog(null, naoTerminais + " não "
-					+ pertence + " a Vn!");
+					+ pertence + " a Vn!", "", JOptionPane.INFORMATION_MESSAGE);
 			return;
 		}
+
 		for (int i = 0; i < producoes.length; i++) {
 			String[] producao = producoes[i];
-			for (int j = 0; j < producao.length; j++) {
-				for (IGUI listener : listeners) {
-					listener.addTransicao(producao[0], producao[1], producao[2]);
+			for (int j = 1; j < producao.length; j++) {
+				String destino = producao[j];
+				if (destino != null) {
+					for (IGUI listener : listeners) {
+						listener.addTransicao(producao[0], destino,
+								alfabeto[j - 1]);
+					}
 				}
 			}
 		}
+	}
+
+	private String[] getAlfabeto() {
+		if (ehAutomato1()) {
+			return alfabeto1;
+		}
+		return alfabeto2;
 	}
 
 	String estadoInicial1;
@@ -346,10 +407,6 @@ public class GUI {
 
 	private ArrayList<String> getEstados() {
 		ArrayList<String> estados = new ArrayList<>();
-		for (IGUI listener : listeners) {
-			listener.limparEstados();
-		}
-
 		for (int i = 0; i < model.getRowCount(); i++) {
 			if (model.getValueAt(i, 0) != null) {
 				String estado = (String) model.getValueAt(i, 0);
@@ -359,8 +416,10 @@ public class GUI {
 					estado = estado.replace("->", "");
 					if (estadoInicial != null) {
 						JOptionPane
-								.showMessageDialog(null,
-										"Pera aê! Tem dois estados inicias! Volta lá e corrige, blz?");
+								.showMessageDialog(
+										null,
+										"Pera aê! Tem dois estados inicias! Volta lá e corrige, blz?",
+										"", JOptionPane.INFORMATION_MESSAGE);
 						break;
 					}
 					estadoInicial = estado;
@@ -369,6 +428,7 @@ public class GUI {
 					estado = estado.replace("*", "");
 					ehFinal = true;
 				}
+				estado = estado.trim();
 				estados.add(estado);
 				for (IGUI listener : listeners) {
 					listener.addEstado(estado, ehInicial, ehFinal);
@@ -386,7 +446,19 @@ public class GUI {
 		listeners.add(listener);
 	}
 
+	String[] alfabeto1;
+	String[] alfabeto2;
+
 	public void setAlfabeto(String[] simbolos) {
+		if (ehAutomato1()) {
+			alfabeto1 = simbolos;
+			model = modeloAF1;
+			estadoInicial = estadoInicial1;
+		} else {
+			model = modeloAF2;
+			estadoInicial = estadoInicial2;
+			alfabeto2 = simbolos;
+		}
 		// Renderiza alfabeto na tabela
 		model.setColumnCount(0);
 		model.setRowCount(0);
@@ -399,4 +471,46 @@ public class GUI {
 	public boolean ehAutomato1() {
 		return rdbtnAutmato1.isSelected();
 	}
+
+	public void addRow(String[] linha) {
+		model.addRow(linha);
+	}
+
+	public void setResultado(String retorno) {
+		JTextArea textArea = new JTextArea();
+		textArea.setLineWrap(true);
+		scrollPaneResultado.setViewportView(textArea);
+		textArea.setText(retorno);
+	}
+
+	public void setAlfabetoResultado(String[] alfabeto) {
+		modeloResultado = new DefaultTableModel();
+		jTableResultado = new JTable();
+		jTableResultado.setModel(modeloResultado);
+		scrollPaneResultado.setViewportView(jTableResultado);
+
+		// Renderiza alfabeto na tabela
+		modeloResultado.setColumnCount(0);
+		modeloResultado.setRowCount(0);
+		modeloResultado.addColumn("Estado");
+		for (int z = 0; z < alfabeto.length; z++) {
+			modeloResultado.addColumn(alfabeto[z]);
+		}
+	}
+
+	public void addRowResultado(String[] linha) {
+		modeloResultado.addRow(linha);
+	}
+
+	public void ehIgual(boolean ehIgual) {
+		String msg = "";
+		if (ehIgual) {
+			msg = "É igual sim!";
+		} else {
+			msg = "Ops... Esses dois não são iguais não!";
+		}
+		JOptionPane.showMessageDialog(null, msg, "",
+				JOptionPane.INFORMATION_MESSAGE);
+	}
+
 }
