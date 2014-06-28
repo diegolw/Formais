@@ -123,6 +123,7 @@ public class GUI {
 		JButton btnMinimizar = new JButton("Minimizar");
 		btnMinimizar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				validar();
 				for (IGUI listener : listeners) {
 					listener.minimizar();
 				}
@@ -132,6 +133,7 @@ public class GUI {
 		JButton btnGramtica = new JButton("Gramática");
 		btnGramtica.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				validar();
 				for (IGUI listener : listeners) {
 					listener.gramatica();
 				}
@@ -142,6 +144,7 @@ public class GUI {
 		JButton btnExpressoRegular = new JButton("Expressão Regular");
 		btnExpressoRegular.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				validar();
 				for (IGUI listener : listeners) {
 					listener.expressaoRegular();
 				}
@@ -153,6 +156,7 @@ public class GUI {
 		JButton btnComplemento = new JButton("Complemento");
 		btnComplemento.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				validar();
 				for (IGUI listener : listeners) {
 					listener.complemento();
 				}
@@ -163,6 +167,7 @@ public class GUI {
 		JButton btnLL_1 = new JButton("L1 ∩ L2");
 		btnLL_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				validar();
 				for (IGUI listener : listeners) {
 					listener.interseccao();
 				}
@@ -173,6 +178,7 @@ public class GUI {
 		JButton btnLL_2 = new JButton("L1 ∪ L2");
 		btnLL_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				validar();
 				for (IGUI listener : listeners) {
 					listener.uniao();
 				}
@@ -183,6 +189,7 @@ public class GUI {
 		JButton btnLL = new JButton("L1 = L2?");
 		btnLL.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				validar();
 				for (IGUI listener : listeners) {
 					listener.igualdade();
 				}
@@ -193,6 +200,7 @@ public class GUI {
 		JButton btnReverso = new JButton("Reverso");
 		btnReverso.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				validar();
 				for (IGUI listener : listeners) {
 					listener.reverso();
 				}
@@ -206,6 +214,7 @@ public class GUI {
 				String retorno = JOptionPane
 						.showInputDialog("Com quantos símbolos?");
 				int numero = Integer.parseInt(retorno);
+				validar();
 				for (IGUI listener : listeners) {
 					listener.enumerar(numero);
 				}
@@ -249,7 +258,6 @@ public class GUI {
 		rdbtnAutmato1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				model = modeloAF1;
-				estadoInicial = estadoInicial1;
 			}
 		});
 		panelEditar.add(rdbtnAutmato1, "cell 0 0");
@@ -259,7 +267,6 @@ public class GUI {
 		rdbtnAutmato2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				model = modeloAF2;
-				estadoInicial = estadoInicial2;
 			}
 		});
 		panelEditar.add(rdbtnAutmato2, "cell 1 0");
@@ -401,11 +408,9 @@ public class GUI {
 		return alfabeto2;
 	}
 
-	String estadoInicial1;
-	String estadoInicial2;
 	String estadoInicial;
-
 	private ArrayList<String> getEstados() {
+		estadoInicial = null;
 		ArrayList<String> estados = new ArrayList<>();
 		for (int i = 0; i < model.getRowCount(); i++) {
 			if (model.getValueAt(i, 0) != null) {
@@ -453,10 +458,8 @@ public class GUI {
 		if (ehAutomato1()) {
 			alfabeto1 = simbolos;
 			model = modeloAF1;
-			estadoInicial = estadoInicial1;
 		} else {
 			model = modeloAF2;
-			estadoInicial = estadoInicial2;
 			alfabeto2 = simbolos;
 		}
 		// Renderiza alfabeto na tabela
