@@ -1,4 +1,4 @@
-package manipulador.view;
+package manipulador.visao;
 
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -167,7 +167,7 @@ public class GUI {
 		JButton btnLL_1 = new JButton("L1 ∩ L2");
 		btnLL_1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				validar();
+				validarDois();
 				for (IGUI listener : listeners) {
 					listener.interseccao();
 				}
@@ -178,18 +178,19 @@ public class GUI {
 		JButton btnLL_2 = new JButton("L1 ∪ L2");
 		btnLL_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				validar();
+				validarDois();
 				for (IGUI listener : listeners) {
 					listener.uniao();
 				}
 			}
+
 		});
 		panelOperacoes.add(btnLL_2, "cell 0 6,growx");
 
 		JButton btnLL = new JButton("L1 = L2?");
 		btnLL.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				validar();
+				validarDois();
 				for (IGUI listener : listeners) {
 					listener.igualdade();
 				}
@@ -243,6 +244,16 @@ public class GUI {
 				for (IGUI l : listeners) {
 					l.testar();
 				}
+				DefaultTableModel temp = model;
+				boolean tempRdbtnAut1 = rdbtnAutmato1.isSelected();
+				model = modeloAF1;
+				rdbtnAutmato1.setSelected(true);
+				validar();
+				model = modeloAF2;
+				rdbtnAutmato2.setSelected(true);
+				validar();
+				rdbtnAutmato1.setSelected(tempRdbtnAut1);
+				model = temp;
 			}
 		});
 		panelOperacoes.add(btnTest, "cell 0 11,growx");
@@ -326,6 +337,19 @@ public class GUI {
 
 		JMenuItem mntmHelp = new JMenuItem("Help");
 		mnArquivo.add(mntmHelp);
+	}
+	
+	private void validarDois() {
+		DefaultTableModel temp = model;
+		boolean tempRdbtnAut1 = rdbtnAutmato1.isSelected();
+		model = modeloAF1;
+		rdbtnAutmato1.setSelected(true);
+		validar();
+		model = modeloAF2;
+		rdbtnAutmato2.setSelected(true);
+		validar();
+		rdbtnAutmato1.setSelected(tempRdbtnAut1);
+		model = temp;
 	}
 
 	private void validar() {

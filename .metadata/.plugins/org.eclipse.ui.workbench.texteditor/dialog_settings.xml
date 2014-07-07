@@ -3,26 +3,26 @@
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog_dialogBounds">
 		<item value="291" key="DIALOG_WIDTH"/>
 		<item value="297" key="DIALOG_Y_ORIGIN"/>
-		<item value="1103" key="DIALOG_X_ORIGIN"/>
 		<item value="472" key="DIALOG_HEIGHT"/>
+		<item value="1103" key="DIALOG_X_ORIGIN"/>
 		<item value="1|Cantarell|11.0|0|GTK|1|" key="DIALOG_FONT_NAME"/>
 	</section>
 	<section name="org.eclipse.ui.texteditor.FindReplaceDialog">
 		<item value="true" key="wrap"/>
-		<item value="false" key="casesensitive"/>
 		<item value="false" key="isRegEx"/>
+		<item value="false" key="casesensitive"/>
 		<item value="false" key="incremental"/>
 		<item value="false" key="wholeword"/>
-		<item value="estadoIni" key="selection"/>
+		<item value="" key="selection"/>
 		<list key="findhistory">
-			<item value="estadoIni"/>
-			<item value="setAlf"/>
-			<item value="estadoInicial1"/>
-			<item value="estadoInicial"/>
-			<item value="Validar"/>
+			<item value="estado"/>
+			<item value="iteradorTemp"/>
 			<item value="validar"/>
-			<item value="expre"/>
-			<item value="Autômato 1"/>
+			<item value="Validar"/>
+			<item value="alfabeto"/>
+			<item value="model"/>
+			<item value="testar"/>
+			<item value="test"/>
 		</list>
 		<list key="replacehistory">
 		</list>

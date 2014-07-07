@@ -1,18 +1,18 @@
-package manipulador.model;
+package manipulador.modelo;
 
 public class ExpressaoRegular {
 
 	private String descricao;
 
-	public boolean setDescricao(String d) {
-		if (validarDescricao(d)) {
-			descricao = d;
+	public boolean setDescricao(String descricao) {
+		if (validarDescricao(descricao)) {
+			this.descricao = descricao;
 			return true;
 		}
 		return false;
 	}
 
-	public boolean validarDescricao(String d) {
+	public boolean validarDescricao(String descricao) {
 		return true;
 	}
 

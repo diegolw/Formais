@@ -2,7 +2,7 @@ package manipulador;
 
 import java.awt.EventQueue;
 
-import manipulador.controller.Mediator;
+import manipulador.controlador.Mediador;
 
 public class Main {
 
@@ -12,7 +12,7 @@ public class Main {
 	public static void main(String[] args) {
 		EventQueue.invokeLater(new Runnable() {
 			public void run() {
-				Mediator mediator = new Mediator();
+				Mediador mediator = new Mediador();
 			}
 		});
 	}

@@ -1,4 +1,4 @@
-package manipulador.view;
+package manipulador.visao;
 
 public interface IGUI {
 

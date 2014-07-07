@@ -1,22 +1,22 @@
-package manipulador.controller;
+package manipulador.controlador;
 
 import java.util.LinkedList;
 
-import manipulador.model.Automato;
-import manipulador.model.Estado;
-import manipulador.model.ExpressaoRegular;
-import manipulador.model.Transicao;
-import manipulador.view.GUI;
-import manipulador.view.IGUI;
+import manipulador.modelo.Automato;
+import manipulador.modelo.Estado;
+import manipulador.modelo.ExpressaoRegular;
+import manipulador.modelo.Transicao;
+import manipulador.visao.GUI;
+import manipulador.visao.IGUI;
 
-public class Mediator implements IGUI {
+public class Mediador implements IGUI {
 
 	private GUI window;
 
 	private Automato automato1;
 	private Automato automato2;
 
-	public Mediator() {
+	public Mediador() {
 		window = new GUI();
 		window.setVisible(true);
 		window.addEventListener(this);
@@ -80,7 +80,7 @@ public class Mediator implements IGUI {
 			} else {
 				linha[0] = "";
 			}
-			if (estadoAtual.ehEstadoFinal()) {
+			if (estadoAtual.ehFinal()) {
 				linha[0] += "* ";
 			}
 			linha[0] += estadoAtual.getNome();
@@ -88,11 +88,11 @@ public class Mediator implements IGUI {
 				for (int j = 0; j < transicoes.length; j++) {
 					if (transicoes[j].getSimbolo().equals(alfabeto[z])) {
 						if (linha[z + 1] == null) {
-							linha[z + 1] = transicoes[j].getEstadoDestino()
+							linha[z + 1] = transicoes[j].getDestino()
 									.getNome();
 						} else
 							linha[z + 1] += ", "
-									+ transicoes[j].getEstadoDestino()
+									+ transicoes[j].getDestino()
 											.getNome();
 					}
 				}
@@ -183,7 +183,7 @@ public class Mediator implements IGUI {
 	@Override
 	public void enumerar(int num) {
 		Automato automato = getAutomato();
-		LinkedList<String> sentencas = automato.getSentencasPorTamanho(num,
+		LinkedList<String> sentencas = automato.getSentencas(num,
 				automato.getEstadoInicial());
 
 		String retorno = sentencas.size() + " sentenças de tamanho " + num
@@ -226,7 +226,7 @@ public class Mediator implements IGUI {
 			} else {
 				linha[0] = "";
 			}
-			if (estadoAtual.ehEstadoFinal()) {
+			if (estadoAtual.ehFinal()) {
 				linha[0] += "* ";
 			}
 			linha[0] += estadoAtual.getNome();
@@ -234,11 +234,11 @@ public class Mediator implements IGUI {
 				for (int j = 0; j < transicoes.length; j++) {
 					if (transicoes[j].getSimbolo().equals(alfabeto[z])) {
 						if (linha[z + 1] == null) {
-							linha[z + 1] = transicoes[j].getEstadoDestino()
+							linha[z + 1] = transicoes[j].getDestino()
 									.getNome();
 						} else
 							linha[z + 1] += ", "
-									+ transicoes[j].getEstadoDestino()
+									+ transicoes[j].getDestino()
 											.getNome();
 					}
 				}
