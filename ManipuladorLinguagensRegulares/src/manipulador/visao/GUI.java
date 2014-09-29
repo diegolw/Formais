@@ -304,7 +304,7 @@ public class GUI {
 						}
 					}
 
-					// Envia para o mediador
+					// Envia para o mediador o alfabeto
 					listener.setAlfabeto(simbolos);
 
 					// Modifica a jTable
@@ -447,7 +447,7 @@ public class GUI {
 						JOptionPane
 								.showMessageDialog(
 										null,
-										"Pera aê! Tem dois estados inicias! Volta lá e corrige, blz?",
+										"Pera aê! Têm dois estados inicias! Volta lá e corrige, blz?",
 										"", JOptionPane.INFORMATION_MESSAGE);
 						break;
 					}

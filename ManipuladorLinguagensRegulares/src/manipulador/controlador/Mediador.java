@@ -1,10 +1,7 @@
 package manipulador.controlador;
 
-import java.util.LinkedList;
-
 import manipulador.modelo.Automato;
 import manipulador.modelo.Estado;
-import manipulador.modelo.ExpressaoRegular;
 import manipulador.modelo.Transicao;
 import manipulador.visao.GUI;
 import manipulador.visao.IGUI;
@@ -20,6 +17,36 @@ public class Mediador implements IGUI {
 		window = new GUI();
 		window.setVisible(true);
 		window.addEventListener(this);
+	}
+
+	public void determinizarTest() {
+		automato1 = new Automato();
+		String[] alfabeto = { "a", "b" };
+		automato1.setAlfabeto(alfabeto);
+		automato1.addEstado("q0");
+		automato1.addEstado("q1");
+		automato1.addEstado("q2");
+		automato1.addEstado("q3");
+		automato1.setEstadoInicial("q0");
+		automato1.setEstadoFinal("q3");
+		automato1.addTransicao("q0", "q0", "a");
+		automato1.addTransicao("q0", "q1", "a");
+		automato1.addTransicao("q0", "q0", "b");
+		automato1.addTransicao("q1", "q2", "b");
+		automato1.addTransicao("q2", "q3", "b");
+		automato1.determinizar();
+
+		if (window.ehAutomato1()) {
+			atualizarAutomato();
+			window.rdbtnAutmato2.setSelected(true);
+			atualizarAutomato();
+			window.rdbtnAutmato1.setSelected(true);
+		} else {
+			atualizarAutomato();
+			window.rdbtnAutmato1.setSelected(true);
+			atualizarAutomato();
+			window.rdbtnAutmato2.setSelected(true);
+		}
 	}
 
 	public void testar() {
@@ -88,12 +115,10 @@ public class Mediador implements IGUI {
 				for (int j = 0; j < transicoes.length; j++) {
 					if (transicoes[j].getSimbolo().equals(alfabeto[z])) {
 						if (linha[z + 1] == null) {
-							linha[z + 1] = transicoes[j].getDestino()
-									.getNome();
+							linha[z + 1] = transicoes[j].getDestino().getNome();
 						} else
 							linha[z + 1] += ", "
-									+ transicoes[j].getDestino()
-											.getNome();
+									+ transicoes[j].getDestino().getNome();
 					}
 				}
 			}
@@ -152,118 +177,60 @@ public class Mediador implements IGUI {
 
 	@Override
 	public void minimizar() {
-		if (window.ehAutomato1()) {
-			automato1 = automato1.getAutomatoMinimizado();
-		} else {
-			automato2 = automato2.getAutomatoMinimizado();
-		}
-		atualizarAutomato();
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void complemento() {
-		if (window.ehAutomato1()) {
-			automato1 = automato1.getComplemento();
-		} else {
-			automato2 = automato2.getComplemento();
-		}
-		atualizarAutomato();
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void reverso() {
-		if (window.ehAutomato1()) {
-			automato1 = automato1.getReverso();
-		} else {
-			automato2 = automato2.getReverso();
-		}
-		atualizarAutomato();
+		// TODO Auto-generated method stub
+
 	}
 
 	@Override
 	public void enumerar(int num) {
-		Automato automato = getAutomato();
-		LinkedList<String> sentencas = automato.getSentencas(num,
-				automato.getEstadoInicial());
+		// TODO Auto-generated method stub
 
-		String retorno = sentencas.size() + " sentenças de tamanho " + num
-				+ " \n";
-		for (String sAtual : sentencas) {
-			retorno += sAtual + " - ";
-		}
-		window.setResultado(retorno);
-	}
-
-	@Override
-	public void igualdade() {
-		boolean ehIgual = automato1.ehIgual(automato2);
-		window.ehIgual(ehIgual);
-	}
-
-	@Override
-	public void interseccao() {
-		Automato automato = automato1.getInterseccao(automato2);
-		atualizarAutomatoResultado(automato);
-	}
-
-	@Override
-	public void uniao() {
-		Automato automato = automato1.getUniao(automato2);
-		atualizarAutomatoResultado(automato);
-	}
-
-	public void atualizarAutomatoResultado(Automato automato) {
-		Estado[] estados = automato.getEstados();
-		String alfabeto[] = automato.getAlfabeto();
-		window.setAlfabetoResultado(alfabeto);
-
-		for (int i = 0; i < estados.length; i++) {
-			Estado estadoAtual = estados[i];
-			String[] linha = new String[alfabeto.length + 1];
-			Transicao[] transicoes = estadoAtual.getTransicoes();
-			if (automato.getEstadoInicial() == estadoAtual) {
-				linha[0] = "->";
-			} else {
-				linha[0] = "";
-			}
-			if (estadoAtual.ehFinal()) {
-				linha[0] += "* ";
-			}
-			linha[0] += estadoAtual.getNome();
-			for (int z = 0; z < alfabeto.length; z++) {
-				for (int j = 0; j < transicoes.length; j++) {
-					if (transicoes[j].getSimbolo().equals(alfabeto[z])) {
-						if (linha[z + 1] == null) {
-							linha[z + 1] = transicoes[j].getDestino()
-									.getNome();
-						} else
-							linha[z + 1] += ", "
-									+ transicoes[j].getDestino()
-											.getNome();
-					}
-				}
-			}
-			window.addRowResultado(linha);
-		}
-	}
-
-	@Override
-	public void gramatica() {
-		Automato automato = getAutomato();
-		String retorno = automato.getGramaticaRegular();
-		window.setResultado(retorno);
-	}
-
-	@Override
-	public void expressaoRegular() {
-		Automato automato = getAutomato();
-		ExpressaoRegular expReg = automato.getExpressaoRegular();
-		String retorno = expReg.getDescricao();
-		window.setResultado(retorno);
 	}
 
 	@Override
 	public void vaziaInfinitaFinita() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void igualdade() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void interseccao() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void uniao() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void gramatica() {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void expressaoRegular() {
 		// TODO Auto-generated method stub
 
 	}
