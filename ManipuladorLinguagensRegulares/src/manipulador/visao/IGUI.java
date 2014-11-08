@@ -7,26 +7,20 @@ public interface IGUI {
 	void setAlfabeto(String[] simbolos);
 
 	void addEstado(String estado, boolean ehInicial, boolean ehFinal);
-
+	
+	void expressaoRegular(String retorno);
+	
 	void minimizar();
 
-	void complemento();
-
-	void reverso();
+	void igualdade();
+	
+	void interseccao();
+	
+	void diferenca();
+	
+	void ocorrencias();
 
 	void enumerar(int num);
-
-	void vaziaInfinitaFinita();
-
-	void igualdade();
-
-	void interseccao();
-
-	void uniao();
-
-	void gramatica();
-
-	void expressaoRegular();
 
 	void testar();
 

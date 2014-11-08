@@ -1,7 +1,10 @@
 package manipulador.controlador;
 
+import java.util.LinkedList;
+
 import manipulador.modelo.Automato;
 import manipulador.modelo.Estado;
+import manipulador.modelo.EstadoAuxiliar;
 import manipulador.modelo.Transicao;
 import manipulador.visao.GUI;
 import manipulador.visao.IGUI;
@@ -58,13 +61,13 @@ public class Mediador implements IGUI {
 		automato1.setNome("AF-um");
 		automato1.addEstado("A");
 		automato1.addEstado("B");
-		automato1.addEstado("C");
+		// automato1.addEstado("C");
 		automato1.addTransicao("A", "B", "a");
-		automato1.addTransicao("A", "C", "b");
+		// automato1.addTransicao("A", "C", "b");
 		automato1.addTransicao("B", "A", "a");
 		automato1.addTransicao("B", "B", "b");
-		automato1.addTransicao("C", "C", "a");
-		automato1.addTransicao("C", "B", "b");
+		// automato1.addTransicao("C", "C", "a");
+		// automato1.addTransicao("C", "B", "b");
 		automato1.setEstadoInicial("A");
 		automato1.setEstadoFinal("B");
 		automato2.setAlfabeto(alf3);
@@ -77,6 +80,7 @@ public class Mediador implements IGUI {
 		automato2.addTransicao("D", "C", "c");
 		automato2.setEstadoInicial("C");
 		automato2.setEstadoFinal("D");
+		automato1 = complemento();
 
 		if (window.ehAutomato1()) {
 			atualizarAutomato();
@@ -176,31 +180,13 @@ public class Mediador implements IGUI {
 	}
 
 	@Override
+	public void expressaoRegular(String expressao) {
+		// Expressão já vem formatada pela View!
+
+	}
+
+	@Override
 	public void minimizar() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void complemento() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void reverso() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void enumerar(int num) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void vaziaInfinitaFinita() {
 		// TODO Auto-generated method stub
 
 	}
@@ -218,21 +204,77 @@ public class Mediador implements IGUI {
 	}
 
 	@Override
-	public void uniao() {
+	public void diferenca() {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void gramatica() {
+	public void ocorrencias() {
 		// TODO Auto-generated method stub
 
 	}
 
 	@Override
-	public void expressaoRegular() {
+	public void enumerar(int num) {
 		// TODO Auto-generated method stub
 
 	}
 
+	//
+
+	private Automato complemento() {
+		Automato automato = getAutomato();
+		Automato complemento = new Automato();
+
+		complemento.setAlfabeto(automato.getAlfabeto());
+		complemento.setEstadosList(automato.getEstadosList());
+		Estado inicial = automato.getEstadoInicial();
+		complemento.setEstadoInicial(inicial.getNome());
+		Estado[] estados = complemento.getEstados();
+		for (int i = 0, max = estados.length; i < max; i++) {
+			Estado estado = estados[i];
+			if (estado.ehFinal()) {
+				estado.setFinal(false);
+			} else {
+				estado.setFinal(true);
+			}
+		}
+		LinkedList<Transicao> transicoes = automato.getTransicoes();
+		for (Transicao transicao : transicoes) {
+			complemento.addTransicao(transicao.getOrigem(),
+					transicao.getDestino(), transicao.getSimbolo());
+		}
+
+		// Criar epsilon transições
+		boolean temEstadoErro = false;
+		Estado erro = null;
+		for (int i = 0, max = estados.length; i < max; i++) {
+			// Eh completo?
+			Estado estado = estados[i];
+			String[] alfabeto = complemento.getAlfabeto();
+			for (int j = 0; j < alfabeto.length; j++) {
+				// Se não tem transição com esse símbolo,
+				// então cria transição para o estado de erro
+				if (!estado.temTransicaoComEsseSimbolo(alfabeto[j])) {
+					if (!temEstadoErro) {
+						erro = new Estado("erro");
+						erro.setFinal(true);
+						for (int k = 0; k < alfabeto.length; k++) {
+							complemento.addTransicao(erro, erro, alfabeto[k]);
+						}
+						complemento.addEstado(erro);
+						temEstadoErro = true;
+					}
+					complemento.addTransicao(estado, erro, alfabeto[j]);
+				}
+			}
+			if (estado.ehFinal()) {
+				estado.setFinal(false);
+			} else {
+				estado.setFinal(true);
+			}
+		}
+		return complemento;
+	}
 }

@@ -10,7 +10,7 @@ public class Estado {
 	private boolean ehFinal;
 	private boolean ehInicial;
 
-	protected Estado(String nome) {
+	public Estado(String nome) {
 		this.nome = nome;
 		transicoes = new LinkedList<Transicao>();
 		ehInicial = false;
@@ -33,12 +33,12 @@ public class Estado {
 		return ehInicial;
 	}
 
-	protected void setInicial() {
-		this.ehInicial = true;
+	public void setInicial(boolean _inicial) {
+		this.ehInicial = _inicial;
 	}
 
-	protected void setFinal() {
-		this.ehFinal = true;
+	public void setFinal(boolean _final) {
+		this.ehFinal = _final;
 	}
 	
 	public boolean getFinal() {
@@ -76,6 +76,16 @@ public class Estado {
 		return arrayTransicoes;
 	}
 
+	public boolean temTransicaoComEsseSimbolo(String simbolo) {
+		Iterator<Transicao> iterador = transicoes.iterator();
+		while (iterador.hasNext()) {
+			Transicao transicao = iterador.next();
+			if (transicao.getSimbolo().equals(simbolo)) {
+				return true;				
+			}
+		}
+		return false;
+	}
 
-
+	
 }
