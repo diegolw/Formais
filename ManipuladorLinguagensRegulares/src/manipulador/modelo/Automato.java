@@ -282,16 +282,103 @@ public class Automato {
 						.getEstado(nome);
 				if (_destino != null) {
 					auxiliar.addTransicao(_destino, simbolo);
-
 				}
 			}
-
 		}
 
 		if (!novosEstados.isEmpty()) {
 			det(novosEstados, transicoes, _automato);
 		}
 		return _automato;
+	}
+	
+	public Automato complemento() {
+		Automato automato = this.clone();
+		Automato complemento = new Automato();
 
+		complemento.setAlfabeto(automato.getAlfabeto());
+		complemento.setEstadosList(automato.getEstadosList());
+		Estado inicial = automato.getEstadoInicial();
+		complemento.setEstadoInicial(inicial.getNome());
+		Estado[] estados = complemento.getEstados();
+		for (int i = 0, max = estados.length; i < max; i++) {
+			Estado estado = estados[i];
+			if (estado.ehFinal()) {
+				estado.setFinal(false);
+			} else {
+				estado.setFinal(true);
+			}
+		}
+		LinkedList<Transicao> transicoes = automato.getTransicoes();
+		for (Transicao transicao : transicoes) {
+			complemento.addTransicao(transicao.getOrigem(),
+					transicao.getDestino(), transicao.getSimbolo());
+		}
+
+		// Criar epsilon transições
+		boolean temEstadoErro = false;
+		Estado erro = null;
+		for (int i = 0, max = estados.length; i < max; i++) {
+			// Eh completo?
+			Estado estado = estados[i];
+			String[] alfabeto = complemento.getAlfabeto();
+			for (int j = 0; j < alfabeto.length; j++) {
+				// Se não tem transição com esse símbolo,
+				// então cria transição para o estado de erro
+				if (!estado.temTransicaoComEsseSimbolo(alfabeto[j])) {
+					if (!temEstadoErro) {
+						erro = new Estado("erro");
+						erro.setFinal(true);
+						for (int k = 0; k < alfabeto.length; k++) {
+							complemento.addTransicao(erro, erro, alfabeto[k]);
+						}
+						complemento.addEstado(erro);
+						temEstadoErro = true;
+					}
+					complemento.addTransicao(estado, erro, alfabeto[j]);
+				}
+			}
+			if (estado.ehFinal()) {
+				estado.setFinal(false);
+			} else {
+				estado.setFinal(true);
+			}
+		}
+		return complemento;
+	}
+	
+	public Automato clone() {
+		Automato clone = new Automato();
+		clone.setNome(new String(nome));
+		String[] alfabetoClone = new String[alfabeto.length];
+		for (int i = 0; i < alfabeto.length; i++) {
+			alfabetoClone[i] = new String(alfabeto[i]);
+		}
+		clone.setAlfabeto(alfabetoClone);
+
+		Iterator<Estado> iterador = estados.iterator();
+		while (iterador.hasNext()) {
+			Estado estado = iterador.next();
+			Estado estadoClone = new Estado(estado.getNome());
+			clone.addEstado(estadoClone);
+		}
+		clone.setEstadoInicial(inicial);
+		Iterator<Estado> iteradorFinais = finais.iterator();
+		while (iteradorFinais.hasNext()) {
+			Estado estado = iteradorFinais.next();
+			clone.setEstadoFinal(estado);
+		}
+		
+		iterador = estados.iterator();
+		while (iterador.hasNext()) {
+			Estado estado = iterador.next();
+			Transicao[] transicao = estado.getTransicoes();
+			for (int i = 0; i < transicao.length; i++) {
+				clone.addTransicao(estado.getNome(), transicao[i].getDestino()
+						.getNome(), transicao[i].getSimbolo());
+			}
+
+		}
+		return clone;
 	}
 }
