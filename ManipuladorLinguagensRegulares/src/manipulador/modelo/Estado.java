@@ -86,6 +86,33 @@ public class Estado {
 		}
 		return false;
 	}
+	
+	public Transicao[] getTransicoesDoSimbolo(String s){
+		LinkedList<Transicao> listaTemp = new LinkedList<Transicao>();
+		Iterator<Transicao> it = transicoes.iterator();
+		while(it.hasNext()){
+			Transicao t = it.next();
+			if(t.getSimbolo().equals(s))
+				listaTemp.add(t);
+		}
+		Transicao[] arrTransicoes = new Transicao[listaTemp.size()];
+		it = listaTemp.iterator();
+		int cont = 0;
+		while(it.hasNext()){
+			arrTransicoes[cont] = it.next();
+			cont++;
+		}
+		return arrTransicoes;		
+	}
+	
+	protected void removeTransicoesParaOEstado(Estado e) {
+		Transicao[] ts = getTransicoes();
+		for(int i = 0 ; i < ts.length ; i++)
+			if(ts[i].getDestino() == e){
+				transicoes.remove(ts[i]);
+			}
+		
+	}
 
 	
 }
