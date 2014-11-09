@@ -5,6 +5,7 @@ import java.util.LinkedList;
 
 public class Automato {
 
+	private static final Estado NULL = null;
 	private static int count = 0;
 	private String nome;
 	private String[] alfabeto;
@@ -141,6 +142,7 @@ public class Automato {
 
 	protected void setEstadoInicial(Estado estado) {
 		inicial = estado;
+		estado.setInicial(true);
 	}
 
 	public LinkedList<Transicao> getTransicoes() {
@@ -380,5 +382,336 @@ public class Automato {
 
 		}
 		return clone;
+	}
+	
+	public void minimizar(){
+				
+		this.eliminarEstadosInalcancaveis();
+		
+		this.eliminarEstadosMortos();
+		
+		this.normatizaTransicoesNulas();
+		
+		this.reduzirPorEquivalencia();
+		
+		this.eliminarEstadosMortos();
+		
+		
+		
+	}
+	
+	public void reduzirPorEquivalencia() {
+        LinkedList<EstadoAuxiliar> classesDeEquivalencia = new LinkedList<EstadoAuxiliar>();
+        EstadoAuxiliar estadosFinais = new EstadoAuxiliar("Finais");
+        EstadoAuxiliar estadosNaoFinais = new EstadoAuxiliar("Não Finais");
+        Iterator<Estado> it = estados.iterator();
+        while (it.hasNext()) {
+            Estado e = it.next();
+            if (e.ehFinal()) {
+                estadosFinais.addEstadoIncluso(e);
+            } else {
+                estadosNaoFinais.addEstadoIncluso(e);
+            }
+        }
+       // System.out.println("Estados finais="+estadosFinais.getEstadosInclusos().length);
+       // System.out.println("Estados Nao finais="+estadosNaoFinais.getEstadosInclusos().length);
+
+
+        classesDeEquivalencia.add(estadosFinais);
+        classesDeEquivalencia.add(estadosNaoFinais);
+
+        boolean acabouDeDividir = false;
+
+        while (!acabouDeDividir) {
+
+            LinkedList<EstadoAuxiliar> classesDeEquivalenciaComparativa = dividirClassesDeEquivalencia(classesDeEquivalencia);
+            
+                        
+            if (classesDeEquivalenciaComparativa == classesDeEquivalencia) {
+                acabouDeDividir = true;
+            } else {
+                classesDeEquivalencia = classesDeEquivalenciaComparativa;
+            }
+        }
+       // System.out.println("Classes de equivalencia");
+       // printLLEA(classesDeEquivalencia);
+       
+        montarAFReduzido(classesDeEquivalencia);
+    }
+	
+	 private void montarAFReduzido(LinkedList<EstadoAuxiliar> classesDeEquivalencia) {
+	        LinkedList<Estado> estadosReduzidos = new LinkedList<Estado>();
+	        Iterator<EstadoAuxiliar> it = classesDeEquivalencia.iterator();
+	        int cont = 0;
+	        while (it.hasNext()) {
+	            EstadoAuxiliar er = it.next();
+	            Estado estadoReduzido = new Estado("q" + cont);
+	            this.addEstado(estadoReduzido);
+	            er.setEstadoAssociado(estadoReduzido);
+	            er.setEstadoAssociadoParaFinalCasoAlgumEstadoInclusoSejaTambem();
+	            er.setEstadoAssociadoParaInicialCasoAlgumEstadoInclusoSejaTambem();
+	            estadosReduzidos.add(estadoReduzido);
+	            cont++;
+	        }
+	        it = classesDeEquivalencia.iterator();
+	        while (it.hasNext()) {
+	            EstadoAuxiliar ex = it.next();
+	            Estado estadoReduzido = ex.getEstadoAssociado();
+	            Estado umEstadoIncluso = ex.getEstadosInclusos()[0];
+	            for (int i = 0; i < alfabeto.length; i++) {
+	                EstadoAuxiliar transicaoAux = retornaEstadoAuxQuePossuiEstado(classesDeEquivalencia, umEstadoIncluso.getTransicoesDoSimbolo(alfabeto[i])[0].getDestino());
+	                addTransicao(estadoReduzido, transicaoAux.getEstadoAssociado(), alfabeto[i]);
+	            }
+	        }
+
+	        EstadoAuxiliar ex = retornaEstadoAuxQuePossuiEstado(classesDeEquivalencia, inicial);
+	        if (ex != null) {
+	           this.setEstadoInicial(ex);
+	        }
+
+	        estados = estadosReduzidos;
+	        
+
+	    }
+	
+	private LinkedList<EstadoAuxiliar> dividirClassesDeEquivalencia(LinkedList<EstadoAuxiliar> classesDeEquivalencia) {
+        boolean mudou = false;
+        LinkedList<EstadoAuxiliar> novasClassesDeEquivalencia = new LinkedList<EstadoAuxiliar>();
+        Iterator<EstadoAuxiliar> itClasses = classesDeEquivalencia.iterator();
+        while (itClasses.hasNext()) { //Para cada classe de equivalência faça:
+            EstadoAuxiliar classe = itClasses.next();
+            if (classe.getEstadosInclusos().length > 1) { //Se tiver mais de um estado nesta classe de eqv faça:
+                Estado[] estadosDaClasse = classe.getEstadosInclusos();
+                LinkedList<EstadoAuxiliar> classesTemporarias = new LinkedList<EstadoAuxiliar>();
+                EstadoAuxiliar novaClasse = new EstadoAuxiliar("",estadosDaClasse[0]);
+                classesTemporarias.add(novaClasse);
+                for (int i = 1; i < estadosDaClasse.length; i++) {
+                    Iterator<EstadoAuxiliar> itClassesTemp = classesTemporarias.iterator();
+                    EstadoAuxiliar classeEquivalente = null;
+                    while (itClassesTemp.hasNext() && classeEquivalente == null) {
+                        EstadoAuxiliar classeTemporaria = itClassesTemp.next();
+                        if (ehEquivalente(estadosDaClasse[i], classeTemporaria.getEstadosInclusos()[0], classesDeEquivalencia)) {
+                            classeEquivalente = classeTemporaria;
+                        }
+                    }
+                    if (classeEquivalente != null) {
+                        classeEquivalente.addEstadoIncluso(estadosDaClasse[i]);
+                    } else {
+                        classesTemporarias.add(new EstadoAuxiliar("",estadosDaClasse[i]));
+                        mudou = true;
+                    }
+                }
+
+                Iterator<EstadoAuxiliar> itClassesTemp = classesTemporarias.iterator();
+                while (itClassesTemp.hasNext()) {
+                    novasClassesDeEquivalencia.add(itClassesTemp.next());
+                }
+            } else {
+                novasClassesDeEquivalencia.add(classe);
+            }
+        }
+
+        if (mudou) {
+            return novasClassesDeEquivalencia;
+        } else {
+            return classesDeEquivalencia;
+        }
+    }
+	
+    private boolean ehEquivalente(Estado e1, Estado e2, LinkedList<EstadoAuxiliar> classesDeEquivalencia) {
+        for (int i = 0; i < alfabeto.length; i++) {
+            EstadoAuxiliar ex1 = retornaEstadoAuxQuePossuiEstado(classesDeEquivalencia, e1.getTransicoesDoSimbolo(alfabeto[i])[0].getDestino());
+            EstadoAuxiliar ex2 = retornaEstadoAuxQuePossuiEstado(classesDeEquivalencia, e2.getTransicoesDoSimbolo(alfabeto[i])[0].getDestino());
+            if (ex1 != ex2) {
+                return false;
+            }
+        }
+        return true;
+    }
+    
+    private EstadoAuxiliar retornaEstadoAuxQuePossuiEstado(LinkedList<EstadoAuxiliar> classesDeEquivalencia, Estado e) {
+        Iterator<EstadoAuxiliar> it = classesDeEquivalencia.iterator();
+        while (it.hasNext()) {
+            EstadoAuxiliar x = it.next();
+            if (x.possui(e)) {
+                return x;
+            }
+        }
+        return null;
+    }
+	
+    public void normatizaTransicoesNulas(){
+    	Estado erro = getEstado("erro");
+    	if(erro == null){
+    		erro = new Estado("erro");
+    		this.addEstado(erro);
+    		for (int i = 0; i < alfabeto.length; i++) {
+                erro.addTransicao(erro, alfabeto[i]);
+            }  
+    	}
+        Estado[] es = getEstados();
+        for (int i = 0; i < es.length; i++) {
+            for (int j = 0; j < alfabeto.length; j++) {
+                Transicao[] ts = es[i].getTransicoesDoSimbolo(alfabeto[j]);
+                if (ts.length == 0) {
+                    es[i].addTransicao(erro, alfabeto[j]);
+                }
+            }
+        }
+    }
+	
+    private boolean alcancaEstadoFinal(Estado e) {
+        LinkedList<Estado> pilhaDeEstados = new LinkedList<Estado>();
+        LinkedList<Estado> listaDeEstadosJaVisitados = new LinkedList<Estado>();
+        pilhaDeEstados.push(e);
+        while (!pilhaDeEstados.isEmpty()) {
+            Estado estadoPop = pilhaDeEstados.pop();
+            if (estadoPop.ehFinal()) {
+                return true;
+            }
+            listaDeEstadosJaVisitados.push(estadoPop);
+            Transicao[] transicoesDoEstadoPop = estadoPop.getTransicoes();
+            for (int i = 0; i < transicoesDoEstadoPop.length; i++) {
+                Estado estado = transicoesDoEstadoPop[i].getDestino();
+                if (!pilhaDeEstados.contains(estado) && !listaDeEstadosJaVisitados.contains(estado)) {
+                    pilhaDeEstados.push(estado);
+                }
+            }
+        }
+        return false;
+    }
+	
+	public void eliminarEstadosMortos() {
+        LinkedList<Estado> listaDeEstadosNaoFinais = new LinkedList<Estado>();
+        LinkedList<Estado> listaDeEstadosFinaisEAlcancaveis = new LinkedList<Estado>();
+
+        //Colocar estadosAF finais e não finais em suas devidas listas
+        Iterator<Estado> it = estados.iterator();
+        while (it.hasNext()) {
+            Estado e = it.next();
+            if (e.ehFinal()) {
+                listaDeEstadosFinaisEAlcancaveis.add(e);
+            } else {
+                listaDeEstadosNaoFinais.add(e);
+            }
+        }
+
+        //Se o estado alcança um estado final ele muda para a lista de estadosAF finais ou alcançados
+        it = listaDeEstadosNaoFinais.iterator();
+        while (it.hasNext()) {
+            Estado e = it.next();
+            if (alcancaEstadoFinal(e)) {
+                listaDeEstadosFinaisEAlcancaveis.add(e);
+            }
+        }
+        it = listaDeEstadosFinaisEAlcancaveis.iterator();
+        while (it.hasNext()) {
+            listaDeEstadosNaoFinais.remove(it.next());
+        }
+
+        //Remove os estadosAF que estão na lista de estadosAF não finais do autômato
+        it = listaDeEstadosNaoFinais.iterator();
+        while (it.hasNext()) {
+            Estado e = it.next();
+            removeEstado(e);
+        }
+
+    }
+	
+	protected void removeEstado(Estado e) {
+        if (e != null) {
+            Iterator<Estado> it = estados.iterator();
+            while (it.hasNext()) {
+                it.next().removeTransicoesParaOEstado(e);
+            }
+
+            boolean removeu = estados.remove(e);
+            if (e == inicial) {
+                inicial = null;
+            }
+        }
+    }
+
+	
+    public void eliminarEstadosInalcancaveis() {
+        LinkedList<Estado> pilhaParaVisitar = new LinkedList<Estado>();
+        LinkedList<Estado> listaEstadosAlcancaveis = new LinkedList<Estado>();
+        pilhaParaVisitar.push(inicial);
+        while (!pilhaParaVisitar.isEmpty()) {
+            Estado e = pilhaParaVisitar.pop();
+            listaEstadosAlcancaveis.add(e);
+            Transicao[] ts = e.getTransicoes();
+            for (int i = 0; i < ts.length; i++) {
+                Estado et = ts[i].getDestino();
+                if (!pilhaParaVisitar.contains(et) && !listaEstadosAlcancaveis.contains(et)) {
+                    pilhaParaVisitar.push(et);
+                }
+            }
+        }
+        estados = new LinkedList<Estado>();
+        Iterator<Estado> it = listaEstadosAlcancaveis.iterator();
+        while (it.hasNext()) {
+            estados.add(it.next());
+        }
+    }
+	
+    public boolean ehCompletoETodosEstadosSaoFinais() {
+        Estado[] e = this.getEstados();
+        for (int i = 0; i < e.length; i++) {
+            if (!e[i].ehFinal()) {
+                return false;
+            }
+            Transicao[] t = e[i].getTransicoes();
+            if (t.length != this.getAlfabeto().length) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+    
+	public void print(){
+		
+		String str = "Automato" + this.getNome()+"\n";
+		Estado[] es = this.getEstados();
+		for(int i =0 ; i< es.length;i++){
+			Transicao[] tr = es[i].getTransicoes();
+			if(es[i].ehFinal())
+				str+= "*";
+			if(es[i].ehInicial())
+				str += "->";
+			str += es[i].getNome()+ " : " ;
+			for( int j=0; j<tr.length ; j++){
+				str += tr[j].getSimbolo()+" "+ tr[j].getDestino().getNome();
+				if(j <tr.length-1)
+					str+= ",";
+				else
+					str += ";\n";
+				
+			}
+			
+		}
+		
+		System.out.println(str);
+	}
+	
+	public void printLLEA(LinkedList<EstadoAuxiliar> lista){
+		Iterator<EstadoAuxiliar> itt = lista.iterator();
+    	String str = "";
+    	int cc = 0;
+    	while(itt.hasNext()){
+    		cc++;
+    		EstadoAuxiliar est = itt.next();
+    		Estado[] associ = est.getEstadosInclusos();
+    		str += "Classe"+cc+" : ";
+    		for(int i=0 ; i < associ.length ; i++){
+    			if(associ[i].ehFinal())
+    				str+="*";
+    			if(associ[i].ehInicial())
+    				str+="->";
+    			str+= associ[i].getNome()+" ,";
+    		}
+    		System.out.println(str);
+    	}
 	}
 }

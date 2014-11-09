@@ -2,6 +2,9 @@ package manipulador.controlador;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
+import java.util.Iterator;
+
+//import javax.swing.text.html.HTMLDocument.Iterator;
 
 import manipulador.modelo.Automato;
 import manipulador.modelo.Estado;
@@ -52,8 +55,65 @@ public class Mediador implements IGUI {
 			window.rdbtnAutmato2.setSelected(true);
 		}
 	}
+	
+	
+	public void testar(){
+		automato1 = new Automato();
+		String[] alfabeto = { "a", "b" };
+		automato1.setAlfabeto(alfabeto);
+		automato1.addEstado("q0");
+		automato1.addEstado("q1");
+		automato1.addEstado("q2");
+		automato1.addEstado("q3");
+		automato1.addEstado("q4");
+		automato1.setEstadoInicial("q0");
+		automato1.setEstadoFinal("q2");
+		automato1.addTransicao("q0", "q1", "a");
+		automato1.addTransicao("q0", "q4", "b");
+		automato1.addTransicao("q1", "q1", "a");
+		automato1.addTransicao("q1", "q2", "b");
+		automato1.addTransicao("q2", "q2", "b");
+		automato1.addTransicao("q3", "q2", "b");
+		automato1.addTransicao("q4", "q4", "b");
+				
+		/*boolean completo = automato1.ehCompletoETodosEstadosSaoFinais();
+		String str = "Não completo";
+		if(completo)
+			str = "Completo";
+		System.out.println("Automato 1 e completo?" + str);*/
+		
+		printAF(automato1);
+		automato1.minimizar();
+		printAF(automato1);
+		
+	}
+	
+	public void printAF(Automato AF){
+		
+		String str = "Automato" + AF.getNome()+"\n";
+		Estado[] es = AF.getEstados();
+		for(int i =0 ; i< es.length;i++){
+			Transicao[] tr = es[i].getTransicoes();
+			if(es[i].ehFinal())
+				str+= "*";
+			if(es[i].ehInicial())
+				str += "->";
+			str += es[i].getNome()+ " : " ;
+			for( int j=0; j<tr.length ; j++){
+				str += tr[j].getSimbolo()+" "+ tr[j].getDestino().getNome();
+				if(j <tr.length-1)
+					str+= ",";
+				else
+					str += ";\n";
+				
+			}
+			
+		}
+		
+		System.out.println(str);
+	}
 
-	public void testar() {
+	public void testar2() {
 		automato1 = new Automato();
 		automato2 = new Automato();
 		String[] alf2 = { "a", "b" };
@@ -228,7 +288,7 @@ public class Mediador implements IGUI {
 	}
 
 	@Override
-	public void minimizar() {
+	public void minimizar(){
 		// TODO Auto-generated method stub
 //		Automato a = uniao();
 //		a.determinizar();

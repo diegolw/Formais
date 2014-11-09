@@ -6,11 +6,16 @@ import java.util.LinkedList;
 public class EstadoAuxiliar extends Estado {
 
 	private LinkedList<Estado> inclusos;
+	private Estado associado;
 	
 	public EstadoAuxiliar(String nome, Estado estado) {
 		super(nome);
 		inclusos = new LinkedList<Estado>();
 		inclusos.add(estado);
+	}
+	public EstadoAuxiliar(String nome) {
+		super(nome);
+		inclusos = new LinkedList<Estado>();
 	}
 	
 	public EstadoAuxiliar(String nome, LinkedList<Estado> estados) {
@@ -19,6 +24,14 @@ public class EstadoAuxiliar extends Estado {
 		for (Estado estado : estados) {
 			addEstadoIncluso(estado);
 		}
+	}
+	
+	public Estado getEstadoAssociado(){
+		return associado;		
+	}
+	
+	public void setEstadoAssociado(Estado es){
+		associado = es;
 	}
 
 	public void addEstadoIncluso(Estado estado) {
@@ -66,6 +79,28 @@ public class EstadoAuxiliar extends Estado {
 
 	public LinkedList<Estado> getEstados() {
 		return inclusos;
+	}
+	
+	public void setEstadoAssociadoParaFinalCasoAlgumEstadoInclusoSejaTambem(){
+		Iterator<Estado> it = inclusos.iterator();
+		if(associado != null){
+			associado.setFinal(false);
+			while(it.hasNext()){
+				if(it.next().ehFinal())
+					associado.setFinal(true);
+			}
+		}
+	}
+	
+	public void setEstadoAssociadoParaInicialCasoAlgumEstadoInclusoSejaTambem(){
+		Iterator<Estado> it = inclusos.iterator();
+		if(associado != null){
+			associado.setInicial(false);
+			while(it.hasNext()){
+				if(it.next().ehInicial())
+					associado.setInicial(true);
+			}
+		}
 	}
 
 }
