@@ -1,5 +1,6 @@
 package manipulador.controlador;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 
 import manipulador.modelo.Automato;
@@ -70,6 +71,8 @@ public class Mediador implements IGUI {
 		// automato1.addTransicao("C", "B", "b");
 		automato1.setEstadoInicial("A");
 		automato1.setEstadoFinal("B");
+		
+		
 		automato2.setAlfabeto(alf3);
 		automato2.setNome("AF-dois");
 		automato2.addEstado("C");
@@ -80,8 +83,8 @@ public class Mediador implements IGUI {
 		automato2.addTransicao("D", "C", "c");
 		automato2.setEstadoInicial("C");
 		automato2.setEstadoFinal("D");
-		automato1 = complemento();
-
+		
+		
 		if (window.ehAutomato1()) {
 			atualizarAutomato();
 			window.rdbtnAutmato2.setSelected(true);
@@ -127,6 +130,41 @@ public class Mediador implements IGUI {
 				}
 			}
 			window.addRow(linha);
+		}
+	}
+	
+	public void atualizarAutomatoResultado(Automato automato) {
+		Estado[] estados = automato.getEstados();
+		String alfabeto[] = automato.getAlfabeto();
+		window.setAlfabetoResultado(alfabeto);
+
+		for (int i = 0; i < estados.length; i++) {
+			Estado estadoAtual = estados[i];
+			String[] linha = new String[alfabeto.length + 1];
+			Transicao[] transicoes = estadoAtual.getTransicoes();
+			if (automato.getEstadoInicial() == estadoAtual) {
+				linha[0] = "->";
+			} else {
+				linha[0] = "";
+			}
+			if (estadoAtual.ehFinal()) {
+				linha[0] += "* ";
+			}
+			linha[0] += estadoAtual.getNome();
+			for (int z = 0; z < alfabeto.length; z++) {
+				for (int j = 0; j < transicoes.length; j++) {
+					if (transicoes[j].getSimbolo().equals(alfabeto[z])) {
+						if (linha[z + 1] == null) {
+							linha[z + 1] = transicoes[j].getDestino()
+									.getNome();
+						} else
+							linha[z + 1] += ", "
+									+ transicoes[j].getDestino()
+											.getNome();
+					}
+				}
+			}
+			window.addRowResultado(linha);
 		}
 	}
 
@@ -188,6 +226,9 @@ public class Mediador implements IGUI {
 	@Override
 	public void minimizar() {
 		// TODO Auto-generated method stub
+		Automato a = uniao();
+		a.determinizar();
+		atualizarAutomatoResultado(a);
 
 	}
 
@@ -205,8 +246,9 @@ public class Mediador implements IGUI {
 
 	@Override
 	public void diferenca() {
-		// TODO Auto-generated method stub
-
+		// L1 - L2 = !((!L1 U L1) U (!L2 U L1))
+		atualizarAutomatoResultado(uniao());
+		
 	}
 
 	@Override
@@ -223,6 +265,74 @@ public class Mediador implements IGUI {
 
 	//
 
+	// XXX: E se tiver estados com nomes iguais?
+	private Automato uniao() {
+		Automato uniao = new Automato();
+		
+		// O alfabeto da união é:
+		ArrayList<String> alfabeto = new ArrayList<String>();
+		String[] alfabeto1 = automato1.getAlfabeto();
+		for (int i = 0; i < alfabeto1.length; i++) {
+			if (!alfabeto.contains(alfabeto1[i])) {
+				alfabeto.add(alfabeto1[i]);
+			}
+		}
+		String[] alfabeto2 = automato2.getAlfabeto();
+		for (int i = 0; i < alfabeto2.length; i++) {
+			if (!alfabeto.contains(alfabeto2[i])) {
+				alfabeto.add(alfabeto2[i]);
+			}
+		}
+		String[] alfabetoUniao = new String[alfabeto.size()];
+		for (int i = 0; i < alfabeto.size(); i++) {
+			alfabetoUniao[i] = alfabeto.get(i);
+		}
+		uniao.setAlfabeto(alfabetoUniao);
+		
+		// 
+		Estado inicial = new Estado("q0");
+		inicial.setInicial(true);
+		uniao.addEstado(inicial);
+		uniao.setEstadoInicial(inicial.getNome());
+		
+		// União dos estados
+		Estado[] estados = automato1.getEstados();
+		for (int i = 0, max = estados.length; i < max; i++) {
+			uniao.addEstado(estados[i]);
+			if (estados[i].ehFinal()) {
+				uniao.setEstadoFinal(estados[i].getNome());
+			}
+		}
+		estados = automato2.getEstados();
+		for (int i = 0, max = estados.length; i < max; i++) {
+			uniao.addEstado(estados[i]);
+			if (estados[i].ehFinal()) {
+				uniao.setEstadoFinal(estados[i].getNome());
+			}
+		}
+		
+		// União das transições
+		Transicao[] transicoesIniciais = automato1.getEstadoInicial().getTransicoes();
+		for (Transicao transicao : transicoesIniciais) {
+			uniao.addTransicao(inicial, transicao.getDestino(), transicao.getSimbolo());
+		}
+		LinkedList<Transicao> transicoes = automato1.getTransicoes();
+		for (Transicao transicao : transicoes) {
+			uniao.addTransicao(transicao.getOrigem(),
+					transicao.getDestino(), transicao.getSimbolo());
+		}
+		transicoesIniciais = automato2.getEstadoInicial().getTransicoes();
+		for (Transicao transicao : transicoesIniciais) {
+			uniao.addTransicao(inicial, transicao.getDestino(), transicao.getSimbolo());
+		}
+		transicoes = automato2.getTransicoes();
+		for (Transicao transicao : transicoes) {
+			uniao.addTransicao(transicao.getOrigem(),
+					transicao.getDestino(), transicao.getSimbolo());
+		}
+		return uniao;
+	}
+	
 	private Automato complemento() {
 		Automato automato = getAutomato();
 		Automato complemento = new Automato();
