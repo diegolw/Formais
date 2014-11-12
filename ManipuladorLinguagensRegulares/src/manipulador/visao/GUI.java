@@ -351,7 +351,8 @@ public class GUI {
 					String nTerminal = (String) model.getValueAt(i, j);
 					if (nTerminal.contains("->")) {
 						nTerminal = nTerminal.replace("->", "");
-					} else if (nTerminal.contains("*")) {
+					}
+					if (nTerminal.contains("*")) {
 						nTerminal = nTerminal.replace("*", "");
 					}
 					nTerminal = nTerminal.trim();
@@ -434,7 +435,8 @@ public class GUI {
 					}
 					estadoInicial = estado;
 					ehInicial = true;
-				} else if (estado.contains("*")) {
+				}
+				if (estado.contains("*")) {
 					estado = estado.replace("*", "");
 					ehFinal = true;
 				}
@@ -518,6 +520,11 @@ public class GUI {
 			msg = "Ops... Esses dois não são iguais não!";
 		}
 		JOptionPane.showMessageDialog(null, msg, "",
+				JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	public void alert(String message) {
+		JOptionPane.showMessageDialog(null, message, "",
 				JOptionPane.INFORMATION_MESSAGE);
 	}
 

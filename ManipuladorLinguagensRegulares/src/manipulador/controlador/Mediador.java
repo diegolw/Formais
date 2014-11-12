@@ -2,16 +2,13 @@ package manipulador.controlador;
 
 import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.Iterator;
 
-//import javax.swing.text.html.HTMLDocument.Iterator;
-
-import manipulador.modelo.Automato;
-import manipulador.modelo.Estado;
-import manipulador.modelo.EstadoAuxiliar;
-import manipulador.modelo.Transicao;
 import manipulador.visao.GUI;
 import manipulador.visao.IGUI;
+//import javax.swing.text.html.HTMLDocument.Iterator;
+import manipulador.modelo.Automato;
+import manipulador.modelo.Estado;
+import manipulador.modelo.Transicao;
 
 public class Mediador implements IGUI {
 
@@ -41,8 +38,50 @@ public class Mediador implements IGUI {
 		automato1.addTransicao("q0", "q0", "b");
 		automato1.addTransicao("q1", "q2", "b");
 		automato1.addTransicao("q2", "q3", "b");
-		automato1.determinizar();
+		//automato1.determinizar();
+		
+		atualizarAutomatoResultado(automato1.determinizar());
+//
+//		if (window.ehAutomato1()) {
+//			atualizarAutomato();
+//			window.rdbtnAutmato2.setSelected(true);
+//			atualizarAutomato();
+//			window.rdbtnAutmato1.setSelected(true);
+//		} else {
+//			atualizarAutomato();
+//			window.rdbtnAutmato1.setSelected(true);
+//			atualizarAutomato();
+//			window.rdbtnAutmato2.setSelected(true);
+//		}
+	}
+	public void testar(){
+		automato1 = new Automato();
+		automato2 = new Automato();
+		String[] alf2 = { "a" };
+		String[] alf3 = { "b" };
+		automato1.setAlfabeto(alf2);
+		automato1.setNome("AF-um");
+		Estado estado = new Estado("A");
+		estado.setInicial(true);
+		automato1.addEstado(estado);
 
+		automato1.addTransicao("A", "A", "a");
+
+		automato1.setEstadoInicial(estado.getNome());
+		automato1.setEstadoFinal("A");
+		
+		
+		automato2.setAlfabeto(alf3);
+		automato2.setNome("AF-dois");
+		Estado estado2 = new Estado("B");
+		estado2.setInicial(true);
+		automato2.addEstado(estado2);
+		automato2.addTransicao("B", "B", "b");
+
+		automato2.setEstadoInicial("B");
+		automato2.setEstadoFinal("B");
+		
+		
 		if (window.ehAutomato1()) {
 			atualizarAutomato();
 			window.rdbtnAutmato2.setSelected(true);
@@ -56,36 +95,53 @@ public class Mediador implements IGUI {
 		}
 	}
 	
-	
-	public void testar(){
+	public void testar3(){
 		automato1 = new Automato();
-		String[] alfabeto = { "a", "b" };
-		automato1.setAlfabeto(alfabeto);
-		automato1.addEstado("q0");
-		automato1.addEstado("q1");
-		automato1.addEstado("q2");
-		automato1.addEstado("q3");
-		automato1.addEstado("q4");
-		automato1.setEstadoInicial("q0");
-		automato1.setEstadoFinal("q2");
-		automato1.addTransicao("q0", "q1", "a");
-		automato1.addTransicao("q0", "q4", "b");
-		automato1.addTransicao("q1", "q1", "a");
-		automato1.addTransicao("q1", "q2", "b");
-		automato1.addTransicao("q2", "q2", "b");
-		automato1.addTransicao("q3", "q2", "b");
-		automato1.addTransicao("q4", "q4", "b");
-				
-		/*boolean completo = automato1.ehCompletoETodosEstadosSaoFinais();
-		String str = "Não completo";
-		if(completo)
-			str = "Completo";
-		System.out.println("Automato 1 e completo?" + str);*/
+		automato2 = new Automato();
+		String[] alf2 = { "a", "b" };
+		String[] alf3 = { "a", "b", "c" };
+		automato1.setAlfabeto(alf2);
+		automato1.setNome("AF-um");
+		Estado estado = new Estado("A");
+		estado.setInicial(true);
+		automato1.addEstado(estado);
+		automato1.addEstado("B");
+		// automato1.addEstado("C");
+		automato1.addTransicao("A", "B", "a");
+		// automato1.addTransicao("A", "C", "b");
+		automato1.addTransicao("B", "A", "a");
+		automato1.addTransicao("B", "B", "b");
+		// automato1.addTransicao("C", "C", "a");
+		// automato1.addTransicao("C", "B", "b");
+		automato1.setEstadoInicial(estado.getNome());
+		automato1.setEstadoFinal("B");
 		
-		printAF(automato1);
-		automato1.minimizar();
-		printAF(automato1);
 		
+		automato2.setAlfabeto(alf3);
+		automato2.setNome("AF-dois");
+		Estado estado2 = new Estado("C");
+		estado2.setInicial(true);
+		automato2.addEstado(estado2);
+		automato2.addEstado("D");
+		automato2.addTransicao("C", "D", "a");
+		automato2.addTransicao("C", "C", "b");
+		automato2.addTransicao("C", "D", "c");
+		automato2.addTransicao("D", "C", "c");
+		automato2.setEstadoInicial("C");
+		automato2.setEstadoFinal("D");
+		
+		
+		if (window.ehAutomato1()) {
+			atualizarAutomato();
+			window.rdbtnAutmato2.setSelected(true);
+			atualizarAutomato();
+			window.rdbtnAutmato1.setSelected(true);
+		} else {
+			atualizarAutomato();
+			window.rdbtnAutmato1.setSelected(true);
+			atualizarAutomato();
+			window.rdbtnAutmato2.setSelected(true);
+		}
 	}
 	
 	public void printAF(Automato AF){
@@ -298,36 +354,71 @@ public class Mediador implements IGUI {
 
 	@Override
 	public void igualdade() {
-		// TODO Auto-generated method stub
-
+		// L1 - L2 = !((!L1 U L2) U (!L2 U L1))
+		
+		// !L1
+		Automato complemeto1 = automato1.complemento();
+		
+		// !L2
+		Automato complemeto2 = automato2.complemento();
+			
+		// !L1 U L2
+		Automato uniao1 = uniao(complemeto1, automato2);
+		uniao1.determinizar();
+		
+		// !L2 U L1
+		Automato uniao2 = uniao(complemeto2, automato1);
+		uniao2.determinizar();
+		
+		// (!L1 U L2) U (!L2 U L1)
+		Automato uniao = uniao(uniao1, uniao2);
+		Automato determinizado = uniao.determinizar();
+		
+		// !((!L1 U L2) U (!L2 U L1))
+		Automato complemento = determinizado.complemento();
+		
+		String message = "";
+		boolean ehVazio = complemento.ehVazio();
+		if (ehVazio) {
+			message += "Sim! L1 e L2 são iguais!";
+		} else {
+			message += "Não! L1 e L2 diferentes!";
+		}
+		window.alert(message);
 	}
 
 	@Override
 	public void interseccao() {
 		// TODO Auto-generated method stub
-
+		determinizarTest();
 	}
 
 	@Override
 	public void diferenca() {
 		// L1 - L2 = !((!L1 U L2) U (!L2 U L1))
 		
+		// !L1
+		Automato complemeto1 = automato1.complemento();
+		
+		// !L2
+		Automato complemeto2 = automato2.complemento();
+			
 		// !L1 U L2
-		Automato clone1 = automato1.clone();
-		Automato clone2 = automato2.clone();
-		Automato complemeto1 = clone1.complemento();
-		Automato complemeto2 = clone2.complemento();
-		Automato uniao1 = uniao(complemeto1, clone2);
+		Automato uniao1 = uniao(complemeto1, automato2);
+		uniao1.determinizar();
 		
 		// !L2 U L1
-		Automato uniao2 = uniao(complemeto2, clone1);
+		Automato uniao2 = uniao(complemeto2, automato1);
+		uniao2.determinizar();
 		
-		Automato diferenca = uniao(uniao1, uniao2);
-		diferenca.determinizar();
+		// (!L1 U L2) U (!L2 U L1)
+		Automato uniao = uniao(uniao1, uniao2);
+		Automato determinizado = uniao.determinizar();
 		
-		Automato complemento = diferenca.complemento();
-		 atualizarAutomatoResultado(complemento);
+		// !((!L1 U L2) U (!L2 U L1))
+		Automato complemento = determinizado.complemento();
 		
+		atualizarAutomatoResultado(complemento);
 	}
 
 	@Override
@@ -338,8 +429,15 @@ public class Mediador implements IGUI {
 
 	@Override
 	public void enumerar(int num) {
-		// TODO Auto-generated method stub
-
+		Automato automato = getAutomato();
+		LinkedList<String> sentencas = automato.getSentencas(num,
+				automato.getEstadoInicial());
+		String retorno = sentencas.size() + " sentenças de tamanho " + num
+				+ " \n";
+		for (String sAtual : sentencas) {
+			retorno += sAtual + " - ";
+		}
+		window.setResultado(retorno);
 	}
 
 	//
@@ -371,6 +469,10 @@ public class Mediador implements IGUI {
 		// 
 		Estado inicial = new Estado("q0");
 		inicial.setInicial(true);
+		if (clone1.getEstadoInicial().ehFinal() || clone2.getEstadoInicial().ehFinal()) {
+			inicial.setFinal(true);
+			uniao.setEstadoFinal(inicial.getNome());
+		}
 		uniao.addEstado(inicial);
 		uniao.setEstadoInicial(inicial.getNome());
 		

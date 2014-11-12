@@ -153,7 +153,7 @@ public class Automato {
 		return transicoes;
 	}
 
-	public void determinizar() {
+	public Automato determinizar() {
 		Automato _automato = new Automato();
 		_automato.setAlfabeto(alfabeto);
 
@@ -193,28 +193,35 @@ public class Automato {
 			}
 			// Agora cria um estado novo com esses estados, caso não exista
 			String nome = "";
+			boolean ehFinal = false;
 			for (Estado _estado : _destinos) {
 				nome += _estado.getNome();
+				if (_estado.ehFinal()) {
+					ehFinal = true;
+				}
 			}
-			if (!_automato.existeEstado(nome)) {
-				EstadoAuxiliar _destino = new EstadoAuxiliar(nome, _destinos);
-				_automato.addEstado(_destino);
-				novosEstados.add(_destino);
-			}
-			// E adiciona a transição
-			EstadoAuxiliar _destino = (EstadoAuxiliar) _automato
-					.getEstado(nome);
-			if (_destino != null) {
-				_inicial.addTransicao(_destino, simbolo);
+			if (!nome.equals("")) {
+				if (!_automato.existeEstado(nome)) {
+					EstadoAuxiliar _destino = new EstadoAuxiliar(nome, _destinos);
+					_automato.addEstado(_destino);
+					if (ehFinal) {
+						_destino.setFinal(true);
+						_automato.setEstadoFinal(_destino.getNome());
+					}
+					novosEstados.add(_destino);
+				}
+				// E adiciona a transição
+				EstadoAuxiliar _destino = (EstadoAuxiliar) _automato
+						.getEstado(nome);
+				if (_destino != null) {
+					_inicial.addTransicao(_destino, simbolo);
+				}
 			}
 		}
 
 		_automato = det(novosEstados, transicoes, _automato);
 
 		// Falta dizer se o estado é inicla ou final
-
-		// Dúvida! Os estados que contém o estado inicial original é também um
-		// estado inicial??
 
 		for (Estado estado : _automato.getEstados()) {
 			// Como esse automato é um automato de estados auxiliares, esse cast
@@ -233,7 +240,8 @@ public class Automato {
 		}
 
 		// Agora chama as transições para esse estado novo!
-
+		
+		return _automato;
 	}
 
 	private Automato det(LinkedList<EstadoAuxiliar> estados,
@@ -270,13 +278,21 @@ public class Automato {
 				}
 				// Agora cria um estado novo com esses estados, caso não exista
 				String nome = "";
+				boolean ehFinal = false;
 				for (Estado _estado : _destinos) {
 					nome += _estado.getNome();
+					if (_estado.ehFinal()) {
+						ehFinal = true;
+					}
 				}
 				if (!nome.equals("") && !_automato.existeEstado(nome)) {
 					EstadoAuxiliar _destino = new EstadoAuxiliar(nome,
 							_destinos);
 					_automato.addEstado(_destino);
+					if (ehFinal) {
+						_destino.setFinal(ehFinal);
+						_automato.setEstadoFinal(_destino.getNome());						
+					}
 					novosEstados.add(_destino);
 				}
 				// E adiciona a transição
@@ -305,11 +321,7 @@ public class Automato {
 		Estado[] estados = complemento.getEstados();
 		for (int i = 0, max = estados.length; i < max; i++) {
 			Estado estado = estados[i];
-			if (estado.ehFinal()) {
-				estado.setFinal(false);
-			} else {
-				estado.setFinal(true);
-			}
+			estado.setFinal(!estado.ehFinal());
 		}
 		LinkedList<Transicao> transicoes = automato.getTransicoes();
 		for (Transicao transicao : transicoes) {
@@ -340,11 +352,6 @@ public class Automato {
 					complemento.addTransicao(estado, erro, alfabeto[j]);
 				}
 			}
-			if (estado.ehFinal()) {
-				estado.setFinal(false);
-			} else {
-				estado.setFinal(true);
-			}
 		}
 		return complemento;
 	}
@@ -362,6 +369,8 @@ public class Automato {
 		while (iterador.hasNext()) {
 			Estado estado = iterador.next();
 			Estado estadoClone = new Estado(estado.getNome());
+			estadoClone.setInicial(estado.ehInicial());
+			estadoClone.setFinal(estado.ehFinal());
 			clone.addEstado(estadoClone);
 		}
 		clone.setEstadoInicial(inicial);
@@ -714,4 +723,37 @@ public class Automato {
     		System.out.println(str);
     	}
 	}
+
+	public boolean ehVazio() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+	
+	// Retorna senteças pelo tamanho
+	public LinkedList<String> getSentencas(int tamanho, Estado estado) {
+		LinkedList<String> resultado = new LinkedList<String>();
+		LinkedList<String> sentencas;
+		Transicao[] transicoes;
+		String simbolo;
+		transicoes = estado.getTransicoes();
+
+		if (tamanho == 1) {
+			for (Transicao transicao : transicoes) {
+				if (transicao.getDestino().ehFinal()) {
+					simbolo = transicao.getSimbolo();
+					resultado.add(simbolo);
+				}
+			}
+		} else {
+			for (Transicao transicao : transicoes) {
+				sentencas = getSentencas(tamanho - 1,
+						transicao.getDestino());
+				for (String sentencaAtual : sentencas) {
+					resultado.add(transicao.getSimbolo() + sentencaAtual);
+				}
+			}
+		}
+		return resultado;
+	}
+
 }
