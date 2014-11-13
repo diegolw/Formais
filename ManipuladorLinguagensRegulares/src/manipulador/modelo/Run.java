@@ -101,54 +101,71 @@ public class Run {
 				temp.outChange.add(1);
 			}
 			else if(curr == '*'){
-				Fragmento e = fragStack.pop();
-				State s = new State();
-				s.tranform = 256;
-				s.out = e.start;
-				s.out1 = null;
-				patch(e,e.out,s);
-				
-				Fragmento temp = new Fragmento(s,createList(s));
-				fragStack.push(temp);
-				temp.outChange.add(1);
+//				Fragmento e = fragStack.pop();
+//				State s = new State();
+//				s.tranform = 256;
+//				s.out = e.start;
+//				s.out1 = null;
+//				patch(e,e.out,s);
+//				
+//				Fragmento temp = new Fragmento(s,createList(s));
+//				fragStack.push(temp);
+//				temp.outChange.add(1);
+				int size = automatos.size();
+				Automato af1 = automatos.get(size);
+				af1.determinizar();
+				af1.getEstadoInicial().setFinal(true);
+				automatos.add(af1);
 				
 			}
 			else if(curr == '?'){
-				Fragmento e = fragStack.pop();
-				State s = new State();
-				s.tranform = 256;
-				s.out = e.start;
-				s.out1 = null;
-				
-				Fragmento temp = new Fragmento(s,appendList(e.out, createList(s)));
-				fragStack.push(temp);
-				temp.outChange.add(1);
-				
-				for(int j = 0;j < e.outChange.size();j++){
-					temp.outChange.add(e.outChange.get(j));
-				}
-				temp.outChange.add(1);
+//				Fragmento e = fragStack.pop();
+//				State s = new State();
+//				s.tranform = 256;
+//				s.out = e.start;
+//				s.out1 = null;
+//				
+//				Fragmento temp = new Fragmento(s,appendList(e.out, createList(s)));
+//				fragStack.push(temp);
+//				temp.outChange.add(1);
+//				
+//				for(int j = 0;j < e.outChange.size();j++){
+//					temp.outChange.add(e.outChange.get(j));
+//				}
+//				temp.outChange.add(1);
+				int size = automatos.size();
+				Automato af1 = automatos.get(size);
+				af1.determinizar();
+				af1.getEstadoInicial().setFinal(true);
+				automatos.add(af1);
 			}
 			else if(curr == '|'){
-				Fragmento e2 = fragStack.pop();
-				Fragmento e1 = fragStack.pop();
-				State s = new State();
-				s.tranform = 256;
-				s.out = e1.start;
-				s.out1 = e2.start;
-				
-				Fragmento temp = new Fragmento(s,appendList(e1.out,e2.out)); 
-				fragStack.push(temp);
-				
-				for(int j = 0;j < e1.outChange.size();j++){
-					temp.outChange.add(e1.outChange.get(j));
-				}
-				for(int j = 0;j < e2.outChange.size();j++){
-					temp.outChange.add(e2.outChange.get(j));
-				}
-				
-				
-				
+//				Fragmento e2 = fragStack.pop();
+//				Fragmento e1 = fragStack.pop();
+//				State s = new State();
+//				s.tranform = 256;
+//				s.out = e1.start;
+//				s.out1 = e2.start;
+//				
+//				Fragmento temp = new Fragmento(s,appendList(e1.out,e2.out)); 
+//				fragStack.push(temp);
+//				
+//				for(int j = 0;j < e1.outChange.size();j++){
+//					temp.outChange.add(e1.outChange.get(j));
+//				}
+//				for(int j = 0;j < e2.outChange.size();j++){
+//					temp.outChange.add(e2.outChange.get(j));
+//				}
+//				
+//				
+				int size = automatos.size();
+				Automato af1 = automatos.get(size);
+				Automato af2 = automatos.get(size-1);
+				Automato concat = new Automato();
+				af1.determinizar();
+				af2.determinizar();
+				concat = concat.uniao(af1, af2);
+				automatos.add(concat);
 				
 			}
 			else if(curr == '.'){
@@ -165,11 +182,11 @@ public class Run {
 				int size = automatos.size();
 				Automato af1 = automatos.get(size);
 				Automato af2 = automatos.get(size-1);
-				Automato uniao = new Automato();
+				Automato concat = new Automato();
 				af1.determinizar();
 				af2.determinizar();
-				uniao = uniao.uniao(af1, af2);
-				automatos.add(uniao);
+				concat = concat.concatenar(af1, af2);
+				automatos.add(concat);
 			}
 			else{
 //				State s = new State();

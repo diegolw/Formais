@@ -842,7 +842,6 @@ public class Automato {
 	
 	public Automato concatenar(Automato af1, Automato af2){
 		Automato concat = new Automato();
-		String[] alf = {};
 		ArrayList<String> alfabeto = new ArrayList<String>();
 		String[] alfabeto1 = af1.getAlfabeto();
 		for (int i = 0; i < alfabeto1.length; i++) {
@@ -872,6 +871,7 @@ public class Automato {
 		concat.setEstadoInicial(inicial.getNome());
 		
 		Estado[] estados = af1.getEstados();
+		LinkedList<Estado> finais1 = af1.getEstadosFinais();
 		for (int i = 0, max = estados.length; i < max; i++) {
 			concat.addEstado(estados[i]);
 			if(estados[i].ehFinal()){
@@ -898,16 +898,22 @@ public class Automato {
 		for (Transicao transicao : transicoes) {
 			concat.addTransicao(transicao.getOrigem(),
 					transicao.getDestino(), transicao.getSimbolo());
-		}
-		af2.getEstadoInicial().setInicial(false);
+		}	
 
 		transicoes = af2.getTransicoes();
 		for (Transicao transicao : transicoes) {
+			if(transicao.getOrigem().ehInicial()){
+				for(int i =0 ;i < finais1.size(); i++){
+					concat.addTransicao(finais1.get(i), transicao.getDestino(), transicao.getSimbolo());
+				}
+				
+			}
 			concat.addTransicao(transicao.getOrigem(),
 					transicao.getDestino(), transicao.getSimbolo());
 		}
-		//concat.eliminarEstadosInalcancaveis();
-		//concat.eliminarEstadosMortos();
+		af2.getEstadoInicial().setInicial(false);
+		concat.eliminarEstadosInalcancaveis();
+		concat.eliminarEstadosMortos();
 		af1.print();
 		af2.print();
 		return concat;

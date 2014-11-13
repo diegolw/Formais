@@ -60,33 +60,33 @@ public class Mediador implements IGUI {
 	
 	public void testar(){
 		
-		/*//String test = "(a|b).a*";
+		//String test = "(a|b).a*";
 		String test = "a?.b.b.a*";
 		System.out.println("ER:"+test);
 		Run myTest = new Run();
 		String postfix = myTest.re2post(test);
 		System.out.println("ER postfixed:"+postfix);
 		State start = myTest.post2dfa(postfix);
-		System.out.println("pos re2postfa"+start.tranform);*/
-		Automato af1 = new Automato();
-		Automato af2 = new Automato();
-		Automato conc = new Automato();
-		String[] alf1 = {"a"};
-		String[] alf2 = {"b"};
-		af1.setAlfabeto(alf1);
-		af2.setAlfabeto(alf2);
-		af1.addEstado("q0");
-		af1.addEstado("q1");
-		af2.addEstado("q2");
-		af2.addEstado("q3");
-		af1.addTransicao("q0", "q1", "a");
-		af2.addTransicao("q2", "q3", "b");
-		af1.setEstadoInicial("q0");
-		af2.setEstadoInicial("q2");
-		af1.setEstadoFinal("q1");
-		af2.setEstadoFinal("q3");
-		conc = conc.concatenar(af1, af2);
-		printAF(conc);
+		System.out.println("pos re2postfa"+start.tranform);
+//		Automato af1 = new Automato();
+//		Automato af2 = new Automato();
+//		Automato conc = new Automato();
+//		String[] alf1 = {"a"};
+//		String[] alf2 = {"b"};
+//		af1.setAlfabeto(alf1);
+//		af2.setAlfabeto(alf2);
+//		af1.addEstado("q0");
+//		af1.addEstado("q1");
+//		af2.addEstado("q2");
+//		af2.addEstado("q3");
+//		af1.addTransicao("q0", "q1", "a");
+//		af2.addTransicao("q2", "q3", "b");
+//		af1.setEstadoInicial("q0");
+//		af2.setEstadoInicial("q2");
+//		af1.setEstadoFinal("q1");
+//		af2.setEstadoFinal("q3");
+//		conc = conc.concatenar(af1, af2);
+//		printAF(conc);
 }
 	
 	public void testar4(){
