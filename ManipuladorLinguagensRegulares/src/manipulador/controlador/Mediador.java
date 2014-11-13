@@ -9,6 +9,9 @@ import manipulador.visao.IGUI;
 import manipulador.modelo.Automato;
 import manipulador.modelo.Estado;
 import manipulador.modelo.Transicao;
+import manipulador.modelo.Run;
+import manipulador.modelo.Fragmento;
+import manipulador.modelo.State;
 
 public class Mediador implements IGUI {
 
@@ -54,8 +57,20 @@ public class Mediador implements IGUI {
 //			window.rdbtnAutmato2.setSelected(true);
 //		}
 	}
+	
 	public void testar(){
 		
+		String test = "(a|b).a*";
+		System.out.println("ER:"+test);
+		Run myTest = new Run();
+		String postfix = myTest.re2post(test);
+		System.out.println("ER postfixed:"+postfix);
+		State start = myTest.post2dfa(postfix);
+		System.out.println("pos re2postfa"+start.tranform);
+}
+	
+	public void testar4(){
+		System.out.println("Aqui");
 		automato1 = new Automato();
 		automato2 = new Automato();
 		String[] alf2 = { "a" };
