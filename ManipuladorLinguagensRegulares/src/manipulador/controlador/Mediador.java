@@ -55,6 +55,7 @@ public class Mediador implements IGUI {
 //		}
 	}
 	public void testar(){
+		
 		automato1 = new Automato();
 		automato2 = new Automato();
 		String[] alf2 = { "a" };
