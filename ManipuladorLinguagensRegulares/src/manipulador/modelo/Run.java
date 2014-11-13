@@ -84,6 +84,7 @@ public class Run {
 	
 	public State post2dfa(String postfix){
 		Stack<Fragmento> fragStack = new Stack<Fragmento>();
+		ArrayList<Automato> automatos = new ArrayList<Automato>();
 		for(int i = 0;i < postfix.length();i++){
 			char curr = postfix.charAt(i);
 			
@@ -151,23 +152,40 @@ public class Run {
 				
 			}
 			else if(curr == '.'){
-				Fragmento e2 = fragStack.pop();
-				Fragmento e1 = fragStack.pop();
-				
-				patch(e1,e1.out,e2.start);
-					
-				Fragmento e3 = new Fragmento();
-				e3.start = e1.start;
-				e3.out = e2.out;
-				e3.outChange = e2.outChange;
-				fragStack.push(e3);
+//				Fragmento e2 = fragStack.pop();
+//				Fragmento e1 = fragStack.pop();
+//				
+//				patch(e1,e1.out,e2.start);
+//					
+//				Fragmento e3 = new Fragmento();
+//				e3.start = e1.start;
+//				e3.out = e2.out;
+//				e3.outChange = e2.outChange;
+//				fragStack.push(e3);
+				int size = automatos.size();
+				Automato af1 = automatos.get(size);
+				Automato af2 = automatos.get(size-1);
+				Automato uniao = new Automato();
+				af1.determinizar();
+				af2.determinizar();
+				uniao = uniao.uniao(af1, af2);
+				automatos.add(uniao);
 			}
 			else{
-				State s = new State();
-				s.tranform = curr;
-				Fragmento temp = new Fragmento(s,createList(s));
-				temp.outChange.add(0);
-				fragStack.push(temp);
+//				State s = new State();
+//				s.tranform = curr;
+//				Fragmento temp = new Fragmento(s,createList(s));
+//				temp.outChange.add(0);
+//				fragStack.push(temp);
+				String s = new StringBuilder().append("").append(curr).toString();
+				String[] alf = { s };
+				Automato af = new Automato();
+				af.addEstado("q0");
+				af.addEstado("q1");
+				af.addTransicao("q0", "q1", s);
+				af.setAlfabeto(alf);
+				af.setEstadoFinal("q1");	
+				automatos.add(af);
 			}
 		
 		}

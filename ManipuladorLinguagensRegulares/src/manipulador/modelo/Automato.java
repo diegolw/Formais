@@ -1,5 +1,6 @@
 package manipulador.modelo;
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedList;
 
@@ -356,6 +357,18 @@ public class Automato {
 		return complemento;
 	}
 	
+	public LinkedList<Estado> getFinais() {
+		return finais;
+	}
+	
+	public void setFinais(LinkedList<Estado> finais) {
+		this.finais = finais;
+	}
+
+	public static void setCount(int count) {
+		Automato.count = count;
+	}
+
 	public Automato clone() {
 		Automato clone = new Automato();
 		clone.setNome(new String(nome));
@@ -754,6 +767,150 @@ public class Automato {
 			}
 		}
 		return resultado;
+	}
+	
+	public Automato uniao(Automato clone1, Automato clone2) {
+		Automato uniao = new Automato();
+		
+		// O alfabeto da união é:
+		ArrayList<String> alfabeto = new ArrayList<String>();
+		String[] alfabeto1 = clone1.getAlfabeto();
+		for (int i = 0; i < alfabeto1.length; i++) {
+			if (!alfabeto.contains(alfabeto1[i])) {
+				alfabeto.add(alfabeto1[i]);
+			}
+		}
+		String[] alfabeto2 = clone2.getAlfabeto();
+		for (int i = 0; i < alfabeto2.length; i++) {
+			if (!alfabeto.contains(alfabeto2[i])) {
+				alfabeto.add(alfabeto2[i]);
+			}
+		}
+		String[] alfabetoUniao = new String[alfabeto.size()];
+		for (int i = 0; i < alfabeto.size(); i++) {
+			alfabetoUniao[i] = alfabeto.get(i);
+		}
+		uniao.setAlfabeto(alfabetoUniao);
+		
+		// 
+		Estado inicial = new Estado("q0");
+		inicial.setInicial(true);
+		if (clone1.getEstadoInicial().ehFinal() || clone2.getEstadoInicial().ehFinal()) {
+			inicial.setFinal(true);
+			uniao.setEstadoFinal(inicial.getNome());
+		}
+		uniao.addEstado(inicial);
+		uniao.setEstadoInicial(inicial.getNome());
+		
+		// União dos estados
+		Estado[] estados = clone1.getEstados();
+		for (int i = 0, max = estados.length; i < max; i++) {
+			uniao.addEstado(estados[i]);
+			if (estados[i].ehFinal()) {
+				uniao.setEstadoFinal(estados[i].getNome());
+			}
+		}
+		estados = clone2.getEstados();
+		for (int i = 0, max = estados.length; i < max; i++) {
+			uniao.addEstado(estados[i]);
+			if (estados[i].ehFinal()) {
+				uniao.setEstadoFinal(estados[i].getNome());
+			}
+		}
+		
+		// União das transições
+		Transicao[] transicoesIniciais = clone1.getEstadoInicial().getTransicoes();
+		for (Transicao transicao : transicoesIniciais) {
+			uniao.addTransicao(inicial, transicao.getDestino(), transicao.getSimbolo());
+		}
+		LinkedList<Transicao> transicoes = clone1.getTransicoes();
+		for (Transicao transicao : transicoes) {
+			uniao.addTransicao(transicao.getOrigem(),
+					transicao.getDestino(), transicao.getSimbolo());
+		}
+		transicoesIniciais = clone2.getEstadoInicial().getTransicoes();
+		for (Transicao transicao : transicoesIniciais) {
+			uniao.addTransicao(inicial, transicao.getDestino(), transicao.getSimbolo());
+		}
+		transicoes = clone2.getTransicoes();
+		for (Transicao transicao : transicoes) {
+			uniao.addTransicao(transicao.getOrigem(),
+					transicao.getDestino(), transicao.getSimbolo());
+		}
+		return uniao;
+	}
+	
+	public Automato concatenar(Automato af1, Automato af2){
+		Automato concat = new Automato();
+		String[] alf = {};
+		ArrayList<String> alfabeto = new ArrayList<String>();
+		String[] alfabeto1 = af1.getAlfabeto();
+		for (int i = 0; i < alfabeto1.length; i++) {
+			if (!alfabeto.contains(alfabeto1[i])) {
+				alfabeto.add(alfabeto1[i]);
+			}
+		}
+		String[] alfabeto2 = af2.getAlfabeto();
+		for (int i = 0; i < alfabeto2.length; i++) {
+			if (!alfabeto.contains(alfabeto2[i])) {
+				alfabeto.add(alfabeto2[i]);
+			}
+		}
+		String[] alfabetoUniao = new String[alfabeto.size()];
+		for (int i = 0; i < alfabeto.size(); i++) {
+			alfabetoUniao[i] = alfabeto.get(i);
+		}
+		concat.setAlfabeto(alfabetoUniao);
+		
+		Estado inicial = new Estado("q0");
+		inicial.setInicial(true);
+		if (af1.getEstadoInicial().ehFinal()) {
+			inicial.setFinal(true);
+			concat.setEstadoFinal(inicial.getNome());
+		}
+		concat.addEstado(inicial);
+		concat.setEstadoInicial(inicial.getNome());
+		
+		Estado[] estados = af1.getEstados();
+		for (int i = 0, max = estados.length; i < max; i++) {
+			concat.addEstado(estados[i]);
+			if(estados[i].ehFinal()){
+				estados[i].setFinal(false);
+				for(int j = 0; j < inicial.getTransicoesList().size();j++){
+					estados[j].addTransicao(af2.getEstadoInicial().getTransicoesList().get(j).getDestino(), getTransicoes().get(j).getSimbolo());
+				}				
+			}
+		}
+		estados = af2.getEstados();
+		for (int i = 0, max = estados.length; i < max; i++) {
+			concat.addEstado(estados[i]);
+			if (estados[i].ehFinal()) {
+				concat.setEstadoFinal(estados[i].getNome());
+				estados[i].setFinal(true);
+			}
+		}
+		
+		Transicao[] transicoesIniciais = af1.getEstadoInicial().getTransicoes();
+		for (Transicao transicao : transicoesIniciais) {
+			concat.addTransicao(inicial, transicao.getDestino(), transicao.getSimbolo());
+		}
+		LinkedList<Transicao> transicoes = af1.getTransicoes();
+		for (Transicao transicao : transicoes) {
+			concat.addTransicao(transicao.getOrigem(),
+					transicao.getDestino(), transicao.getSimbolo());
+		}
+		af2.getEstadoInicial().setInicial(false);
+
+		transicoes = af2.getTransicoes();
+		for (Transicao transicao : transicoes) {
+			concat.addTransicao(transicao.getOrigem(),
+					transicao.getDestino(), transicao.getSimbolo());
+		}
+		//concat.eliminarEstadosInalcancaveis();
+		//concat.eliminarEstadosMortos();
+		af1.print();
+		af2.print();
+		return concat;
 	}
 
 }
