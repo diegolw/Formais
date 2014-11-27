@@ -23,11 +23,5 @@ public class Transicao {
 	public String getSimbolo() {
 		return simbolo;
 	}
-
-	public String toString() {
-		String string = origem.toString() + " -" + simbolo + "----> "
-				+ destino.toString();
-		return string;
-	}
-
+	
 }

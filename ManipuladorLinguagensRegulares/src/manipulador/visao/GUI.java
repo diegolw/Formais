@@ -117,9 +117,8 @@ public class GUI {
 				TitledBorder.LEADING, TitledBorder.TOP, null, null));
 		frmManipuladorDeLinguagens.getContentPane().add(panelOperacoes,
 				"cell 2 0 1 3,grow");
-		panelOperacoes.setLayout(new MigLayout("", "[]",
-				"[][][][][][][][][][][][][]"));
-
+		panelOperacoes.setLayout(new MigLayout("", "[]", "[][][][][][][][][][][]"));
+		
 		JButton btnMinimizar = new JButton("Minimizar");
 		btnMinimizar.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -130,39 +129,19 @@ public class GUI {
 			}
 		});
 
-		JButton btnGramtica = new JButton("Gramática");
-		btnGramtica.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				validar();
-				for (IGUI listener : listeners) {
-					listener.gramatica();
-				}
-			}
-		});
-		panelOperacoes.add(btnGramtica, "cell 0 0,growx");
-
 		JButton btnExpressoRegular = new JButton("Expressão Regular");
 		btnExpressoRegular.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				String retorno = JOptionPane
+						.showInputDialog("Qual é a sua expressão?");
 				validar();
 				for (IGUI listener : listeners) {
-					listener.expressaoRegular();
+					listener.expressaoRegular(retorno);
 				}
 			}
 		});
-		panelOperacoes.add(btnExpressoRegular, "cell 0 1,growx");
-		panelOperacoes.add(btnMinimizar, "cell 0 2,growx");
-
-		JButton btnComplemento = new JButton("Complemento");
-		btnComplemento.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-				validar();
-				for (IGUI listener : listeners) {
-					listener.complemento();
-				}
-			}
-		});
-		panelOperacoes.add(btnComplemento, "cell 0 3,growx");
+		panelOperacoes.add(btnExpressoRegular, "cell 0 0,growx");
+		panelOperacoes.add(btnMinimizar, "cell 0 1,growx");
 
 		JButton btnLL_1 = new JButton("L1 ∩ L2");
 		btnLL_1.addActionListener(new ActionListener() {
@@ -173,19 +152,19 @@ public class GUI {
 				}
 			}
 		});
-		panelOperacoes.add(btnLL_1, "cell 0 5,growx");
+		panelOperacoes.add(btnLL_1, "cell 0 3,growx");
 
-		JButton btnLL_2 = new JButton("L1 ∪ L2");
+		JButton btnLL_2 = new JButton("L1 - L2");
 		btnLL_2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				validarDois();
 				for (IGUI listener : listeners) {
-					listener.uniao();
+					listener.diferenca();
 				}
 			}
 
 		});
-		panelOperacoes.add(btnLL_2, "cell 0 6,growx");
+		panelOperacoes.add(btnLL_2, "cell 0 4,growx");
 
 		JButton btnLL = new JButton("L1 = L2?");
 		btnLL.addActionListener(new ActionListener() {
@@ -196,18 +175,18 @@ public class GUI {
 				}
 			}
 		});
-		panelOperacoes.add(btnLL, "cell 0 4,growx");
+		panelOperacoes.add(btnLL, "cell 0 2,growx");
 
-		JButton btnReverso = new JButton("Reverso");
-		btnReverso.addActionListener(new ActionListener() {
+		JButton btnOcorrencias = new JButton("Ocorrências");
+		btnOcorrencias.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				validar();
 				for (IGUI listener : listeners) {
-					listener.reverso();
+					listener.ocorrencias();
 				}
 			}
 		});
-		panelOperacoes.add(btnReverso, "cell 0 7,growx");
+		panelOperacoes.add(btnOcorrencias, "cell 0 5,growx");
 
 		JButton btnEnumerar = new JButton("Enumerar");
 		btnEnumerar.addActionListener(new ActionListener() {
@@ -221,14 +200,7 @@ public class GUI {
 				}
 			}
 		});
-		panelOperacoes.add(btnEnumerar, "cell 0 8,growx");
-
-		JButton btnVazia = new JButton("Vazia, infinita ou finita?");
-		btnVazia.addActionListener(new ActionListener() {
-			public void actionPerformed(ActionEvent e) {
-			}
-		});
-		panelOperacoes.add(btnVazia, "cell 0 9,growx");
+		panelOperacoes.add(btnEnumerar, "cell 0 6,growx");
 
 		JButton btnValidar = new JButton("Validar");
 		btnValidar.addActionListener(new ActionListener() {
@@ -236,7 +208,7 @@ public class GUI {
 				validar();
 			}
 		});
-		panelOperacoes.add(btnValidar, "cell 0 10,growx");
+		panelOperacoes.add(btnValidar, "cell 0 8,growx");
 
 		JButton btnTest = new JButton("Teste");
 		btnTest.addActionListener(new ActionListener() {
@@ -256,7 +228,7 @@ public class GUI {
 				model = temp;
 			}
 		});
-		panelOperacoes.add(btnTest, "cell 0 11,growx");
+		panelOperacoes.add(btnTest, "cell 0 9,growx");
 
 		JPanel panelEditar = new JPanel();
 		panelEditar.setBorder(new TitledBorder(null, "Editar",
@@ -304,7 +276,7 @@ public class GUI {
 						}
 					}
 
-					// Envia para o mediador
+					// Envia para o mediador o alfabeto
 					listener.setAlfabeto(simbolos);
 
 					// Modifica a jTable
@@ -334,9 +306,18 @@ public class GUI {
 
 		JMenu mnArquivo = new JMenu("Arquivo");
 		menuBar.add(mnArquivo);
+		
+		JMenuItem mntmAbrir = new JMenuItem("Abrir");
+		mnArquivo.add(mntmAbrir);
 
-		JMenuItem mntmHelp = new JMenuItem("Help");
-		mnArquivo.add(mntmHelp);
+		JMenuItem mntmSalvar = new JMenuItem("Salvar");
+		mnArquivo.add(mntmSalvar);
+		
+		JMenuItem mntmAjuda = new JMenuItem("Ajuda");
+		mnArquivo.add(mntmAjuda);
+		
+		JMenuItem mntmSair= new JMenuItem("Sair");
+		mnArquivo.add(mntmSair);
 	}
 	
 	private void validarDois() {
@@ -370,7 +351,8 @@ public class GUI {
 					String nTerminal = (String) model.getValueAt(i, j);
 					if (nTerminal.contains("->")) {
 						nTerminal = nTerminal.replace("->", "");
-					} else if (nTerminal.contains("*")) {
+					}
+					if (nTerminal.contains("*")) {
 						nTerminal = nTerminal.replace("*", "");
 					}
 					nTerminal = nTerminal.trim();
@@ -447,13 +429,14 @@ public class GUI {
 						JOptionPane
 								.showMessageDialog(
 										null,
-										"Pera aê! Tem dois estados inicias! Volta lá e corrige, blz?",
+										"Pera aê! Têm dois estados inicias! Volta lá e corrige, blz?",
 										"", JOptionPane.INFORMATION_MESSAGE);
 						break;
 					}
 					estadoInicial = estado;
 					ehInicial = true;
-				} else if (estado.contains("*")) {
+				}
+				if (estado.contains("*")) {
 					estado = estado.replace("*", "");
 					ehFinal = true;
 				}
@@ -537,6 +520,11 @@ public class GUI {
 			msg = "Ops... Esses dois não são iguais não!";
 		}
 		JOptionPane.showMessageDialog(null, msg, "",
+				JOptionPane.INFORMATION_MESSAGE);
+	}
+
+	public void alert(String message) {
+		JOptionPane.showMessageDialog(null, message, "",
 				JOptionPane.INFORMATION_MESSAGE);
 	}
 

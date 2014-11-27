@@ -1,0 +1,322 @@
+package manipulador.modelo;
+
+import java.util.ArrayList;
+import java.util.Stack;
+
+
+public class Run {
+	private int listID;
+	
+	public Run(){
+	}
+	
+//	public static void main(String[] args) {
+//		String test = "a?.a?.a?.a?.a?.a?.a?.a?.a?.a?.a.a.a.a.a.a.a.a.a.a";
+//		Run myTest = new Run();
+//		String postfix = myTest.re2post(test);
+//		State start = myTest.post2dfa(postfix);
+//		System.out.println(postfix);
+//		//String temp = "aaaaaaaaaaaaaa";
+//		//System.out.println(myTest.match(start, temp));
+//		
+//	}
+	
+	public ArrayList<State> startList(State s, ArrayList<State> l){
+		listID++;
+		l.clear();
+		addState(l,s);
+		
+		return l;
+	}
+	
+	public void addState(ArrayList<State> l, State s){
+		if(s == null || s.lastList == listID)
+			return;
+		s.lastList = listID;
+		
+		if(s.tranform == 256){
+			addState(l,s.out);
+			addState(l,s.out1);
+			return;
+		}
+		l.add(s);
+	}
+	
+	public int isMatch(ArrayList<State> l){
+		for(int i = 0;i < l.size();i++){
+			if(l.get(i).tranform == 257)
+				return 1;
+		}
+		return 0;
+	}
+	
+	public void step(ArrayList<State> currList, int c, ArrayList<State> nextList){
+		listID++;
+		nextList.clear();
+		
+		for(int i = 0;i < currList.size();i++){
+			if(currList.get(i).tranform == c){
+				addState(nextList, currList.get(i).out);
+			}
+		}
+	}
+	
+	public int match(State start, String s){
+		ArrayList<State> currList = new ArrayList<State>();
+		ArrayList<State> nextList = new ArrayList<State>();
+		
+		
+		startList(start, currList);
+		
+		for(int i = 0;i < s.length();i++){
+			step(currList,s.charAt(i),nextList);
+			ArrayList<State> temp = currList;
+			currList = nextList;
+			nextList = temp;
+		}
+		
+		
+		return isMatch(currList);
+	}
+	
+	
+	
+	
+	public State post2dfa(String postfix){
+		Stack<Fragmento> fragStack = new Stack<Fragmento>();
+		ArrayList<Automato> automatos = new ArrayList<Automato>();
+		for(int i = 0;i < postfix.length();i++){
+			char curr = postfix.charAt(i);
+			
+			if(curr == '+'){
+				Fragmento e = fragStack.pop();
+				State s = new State();
+				s.tranform = 256;
+				s.out = e.start;
+				s.out1 = null;
+				patch(e,e.out,s);
+				
+				Fragmento temp = new Fragmento(e.start,createList(s)); 
+				fragStack.push(temp);
+				temp.outChange.add(1);
+			}
+			else if(curr == '*'){
+//				Fragmento e = fragStack.pop();
+//				State s = new State();
+//				s.tranform = 256;
+//				s.out = e.start;
+//				s.out1 = null;
+//				patch(e,e.out,s);
+//				
+//				Fragmento temp = new Fragmento(s,createList(s));
+//				fragStack.push(temp);
+//				temp.outChange.add(1);
+				int size = automatos.size();
+				Automato af1 = automatos.get(size);
+				af1.determinizar();
+				af1.getEstadoInicial().setFinal(true);
+				automatos.add(af1);
+				
+			}
+			else if(curr == '?'){
+//				Fragmento e = fragStack.pop();
+//				State s = new State();
+//				s.tranform = 256;
+//				s.out = e.start;
+//				s.out1 = null;
+//				
+//				Fragmento temp = new Fragmento(s,appendList(e.out, createList(s)));
+//				fragStack.push(temp);
+//				temp.outChange.add(1);
+//				
+//				for(int j = 0;j < e.outChange.size();j++){
+//					temp.outChange.add(e.outChange.get(j));
+//				}
+//				temp.outChange.add(1);
+				int size = automatos.size();
+				Automato af1 = automatos.get(size);
+				af1.determinizar();
+				af1.getEstadoInicial().setFinal(true);
+				automatos.add(af1);
+			}
+			else if(curr == '|'){
+//				Fragmento e2 = fragStack.pop();
+//				Fragmento e1 = fragStack.pop();
+//				State s = new State();
+//				s.tranform = 256;
+//				s.out = e1.start;
+//				s.out1 = e2.start;
+//				
+//				Fragmento temp = new Fragmento(s,appendList(e1.out,e2.out)); 
+//				fragStack.push(temp);
+//				
+//				for(int j = 0;j < e1.outChange.size();j++){
+//					temp.outChange.add(e1.outChange.get(j));
+//				}
+//				for(int j = 0;j < e2.outChange.size();j++){
+//					temp.outChange.add(e2.outChange.get(j));
+//				}
+//				
+//				
+				int size = automatos.size();
+				Automato af1 = automatos.get(size);
+				Automato af2 = automatos.get(size-1);
+				Automato concat = new Automato();
+				af1.determinizar();
+				af2.determinizar();
+				concat = concat.uniao(af1, af2);
+				automatos.add(concat);
+				
+			}
+			else if(curr == '.'){
+//				Fragmento e2 = fragStack.pop();
+//				Fragmento e1 = fragStack.pop();
+//				
+//				patch(e1,e1.out,e2.start);
+//					
+//				Fragmento e3 = new Fragmento();
+//				e3.start = e1.start;
+//				e3.out = e2.out;
+//				e3.outChange = e2.outChange;
+//				fragStack.push(e3);
+				int size = automatos.size();
+				Automato af1 = automatos.get(size);
+				Automato af2 = automatos.get(size-1);
+				Automato concat = new Automato();
+				af1.determinizar();
+				af2.determinizar();
+				concat = concat.concatenar(af1, af2);
+				automatos.add(concat);
+			}
+			else{
+//				State s = new State();
+//				s.tranform = curr;
+//				Fragmento temp = new Fragmento(s,createList(s));
+//				temp.outChange.add(0);
+//				fragStack.push(temp);
+				String s = new StringBuilder().append("").append(curr).toString();
+				String[] alf = { s };
+				Automato af = new Automato();
+				af.addEstado("q0");
+				af.addEstado("q1");
+				af.addTransicao("q0", "q1", s);
+				af.setAlfabeto(alf);
+				af.setEstadoFinal("q1");	
+				automatos.add(af);
+			}
+		
+		}
+		
+		Fragmento e = fragStack.pop();
+		State matchState = new State();
+		matchState.tranform = 257;
+		matchState.out = null;
+		matchState.out1 = null;
+		
+		patch(e,e.out,matchState);
+	//	System.out.println(e.start);
+	//	System.out.println(e.start.out);
+		return e.start;
+	}
+	
+	
+	
+	public ArrayList<State> createList(State out1){
+		ArrayList<State> temp = new ArrayList<State>();
+		temp.add(out1);
+		return temp;
+	}
+	
+	public ArrayList<State> appendList(ArrayList<State> list1, ArrayList<State> list2){
+		ArrayList<State> temp = new ArrayList<State>();
+		
+		for(int i = 0;i < list1.size();i++){
+			temp.add(list1.get(i));
+		}
+		
+		for(int i = 0;i < list2.size();i++){
+			temp.add(list2.get(i));
+		}
+		
+		return temp;
+	}
+	public void patch(Fragmento f, ArrayList<State> list, State s){
+		for(int i = 0;i < list.size();i++){
+			State temp = list.get(i);
+			int flag = f.outChange.get(i);
+			if(flag == 1)
+				temp.out1 = s;
+			else if(flag == 0)
+				temp.out = s;
+		}
+	}
+	
+	public String re2post(String input){
+		String postFix = "";
+		ArrayList<Character> stack = new ArrayList<Character>();
+		
+		for(int i = 0;i < input.length();i++){
+			char x = input.charAt(i);
+			
+			
+			if(stack.size() == 0 || stack.get(stack.size()-1)== '('){
+				if(x == '+' || x == '*' || x == '|' || x == '?' || x=='.' || x=='(' || x==')'){
+					stack.add(x);
+					continue;
+				}
+			}
+			
+			switch(x){
+			case '+': case '*': case '|': case '.': case '?':
+				char top = stack.get(stack.size()-1);
+				if(getPrecedence(x) > getPrecedence(top)){
+					stack.add(x);
+				}
+				else if(getPrecedence(x) == getPrecedence(top)){
+					postFix = postFix + top;
+					stack.remove(stack.size()-1);
+					stack.add(x);
+				}
+				else{
+					stack.remove(stack.size()-1);
+					postFix = postFix + top;
+					i = i-1;
+				}
+				break;
+			case '(':
+				stack.add(x);	
+				break;
+			case ')':
+				while(true){
+					char temp = stack.get(stack.size()-1);
+					stack.remove(stack.size()-1);
+					if(temp == '(')
+						break;
+					postFix = postFix + temp;
+				}
+				break;
+			default:
+				postFix = postFix + x;
+				break;
+			}
+			
+			
+		}
+		
+		for(int i = stack.size()-1;i>=0;i--){
+			postFix = postFix + stack.get(i);
+		}
+		
+		return postFix;
+	}
+	
+	int getPrecedence(char x){
+		if(x == '|')
+			return 1;
+		else if(x == '.')
+			return 2;
+		else 
+			return 3;
+	}
+	
+}

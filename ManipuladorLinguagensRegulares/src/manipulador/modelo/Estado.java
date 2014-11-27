@@ -5,20 +5,24 @@ import java.util.LinkedList;
 
 public class Estado {
 
-	private Automato pai;
 	private String nome;
 	private LinkedList<Transicao> transicoes;
 	private boolean ehFinal;
+	private boolean ehInicial;
 
-	protected Estado(String n, Automato ap) {
-		pai = ap;
-		nome = n;
+	public Estado(String nome) {
+		this.nome = nome;
 		transicoes = new LinkedList<Transicao>();
+		ehInicial = false;
 		ehFinal = false;
 	}
 
-	public void setNome(String n) {
-		this.nome = n;
+	public void setNome(String nome) {
+		this.nome = nome;
+	}
+	
+	public String getNome() {
+		return nome;
 	}
 
 	public boolean ehFinal() {
@@ -26,23 +30,19 @@ public class Estado {
 	}
 
 	public boolean ehInicial() {
-		return pai.getEstadoInicial() == this;
+		return ehInicial;
 	}
 
-	protected void setInicial() {
-		pai.setEstadoInicial(this);
+	public void setInicial(boolean _inicial) {
+		this.ehInicial = _inicial;
 	}
 
-	protected void setFinal(boolean isFinal) {
-		ehFinal = isFinal;
+	public void setFinal(boolean _final) {
+		this.ehFinal = _final;
 	}
-
-	public String getNome() {
-		return nome;
-	}
-
-	protected Automato getPai() {
-		return pai;
+	
+	public boolean getFinal() {
+		return ehFinal;
 	}
 
 	protected void addTransicao(Estado destino, String simbolo) {
@@ -57,110 +57,62 @@ public class Estado {
 		while (iterador.hasNext()) {
 			Transicao transicao = iterador.next();
 			if (transicao.getDestino() == destino
-					&& transicao.getSimbolo().equals(simbolo))
-				return true;
+					&& transicao.getSimbolo().equals(simbolo)) {
+				return true;				
+			}
 		}
 		return false;
 	}
 
-	public String toString() {
-		return nome;
-	}
-
-	public Transicao[] getTransicoes() {
-		Iterator<Transicao> iterador = transicoes.iterator();
-		Transicao[] retornoTransicoes = new Transicao[transicoes.size()];
-		int cont = 0;
-		while (iterador.hasNext()) {
-			retornoTransicoes[cont] = iterador.next();
-			cont++;
-		}
-		return retornoTransicoes;
-	}
-
-	public Transicao[] getTransicoesDoSimbolo(String simbolo) {
-		LinkedList<Transicao> transicoesTemp = new LinkedList<Transicao>();
-		Iterator<Transicao> iterador = transicoes.iterator();
-		while (iterador.hasNext()) {
-			Transicao transicao = iterador.next();
-			if (transicao.getSimbolo().equals(simbolo))
-				transicoesTemp.add(transicao);
-		}
-		Transicao[] retornoTransicoes = new Transicao[transicoesTemp.size()];
-		iterador = transicoesTemp.iterator();
-		int cont = 0;
-		while (iterador.hasNext()) {
-			retornoTransicoes[cont] = iterador.next();
-			cont++;
-		}
-		return retornoTransicoes;
-	}
-
-	public Transicao[] getTransicoesParaSiMesmo() {
-		LinkedList<Transicao> transicoesParaSiMesmo = new LinkedList<Transicao>();
-		Iterator<Transicao> iterador = transicoes.iterator();
-		while (iterador.hasNext()) {
-			Transicao transicao = iterador.next();
-			if (transicao.getDestino() == this)
-				transicoesParaSiMesmo.add(transicao);
-		}
-		Transicao[] retornoTransicoes = new Transicao[transicoesParaSiMesmo
-				.size()];
-		iterador = transicoesParaSiMesmo.iterator();
-		for (int i = 0; i < retornoTransicoes.length; i++)
-			retornoTransicoes[i] = iterador.next();
-
-		return retornoTransicoes;
-	}
-
-	public Transicao[] getTransicoesParaOutroEstado() {
-		LinkedList<Transicao> transicoesOutroEstado = new LinkedList<Transicao>();
-		Iterator<Transicao> iterador = transicoes.iterator();
-		while (iterador.hasNext()) {
-			Transicao transicao = iterador.next();
-			if (transicao.getDestino() != this)
-				transicoesOutroEstado.add(transicao);
-		}
-		Transicao[] retornoTransicoes = new Transicao[transicoesOutroEstado
-				.size()];
-		iterador = transicoesOutroEstado.iterator();
-		for (int i = 0; i < retornoTransicoes.length; i++)
-			retornoTransicoes[i] = iterador.next();
-
-		return retornoTransicoes;
-	}
-
-	protected void removeTransicoesParaOEstado(Estado estado) {
-		Transicao[] transicoesAtuais = getTransicoes();
-		for (int i = 0; i < transicoesAtuais.length; i++)
-			if (transicoesAtuais[i].getDestino() == estado) {
-				transicoes.remove(transicoesAtuais[i]);
-			}
-	}
-
-	protected Transicao[] getTransicoesQueChegam() {
-		LinkedList<Transicao> retornoTransicoes = new LinkedList<Transicao>();
-		Estado[] estados = pai.getEstados();
-		for (int i = 0; i < estados.length; i++) {
-			Transicao[] transicoes = estados[i].getTransicoes();
-			for (int j = 0; j < transicoes.length; j++) {
-				if (transicoes[j].getDestino() == this) {
-					retornoTransicoes.add(transicoes[j]);
-				}
-			}
-
-		}
-		// Só transfere para um array ao invés de lista
-		Transicao[] transicoes = new Transicao[retornoTransicoes.size()];
-		Iterator<Transicao> iterador = retornoTransicoes.iterator();
-		for (int i = 0; i < transicoes.length; i++) {
-			transicoes[i] = iterador.next();
-		}
+	public LinkedList<Transicao> getTransicoesList() {
 		return transicoes;
 	}
-
-	public boolean getFinal() {
-		return ehFinal;
+	
+	public Transicao[] getTransicoes() {
+		Transicao[] arrayTransicoes = new Transicao[transicoes.size()];
+		for (int i = 0, max = transicoes.size(); i < max; i++) {
+			arrayTransicoes[i] = transicoes.get(i);
+		}
+		return arrayTransicoes;
 	}
 
+	public boolean temTransicaoComEsseSimbolo(String simbolo) {
+		Iterator<Transicao> iterador = transicoes.iterator();
+		while (iterador.hasNext()) {
+			Transicao transicao = iterador.next();
+			if (transicao.getSimbolo().equals(simbolo)) {
+				return true;				
+			}
+		}
+		return false;
+	}
+	
+	public Transicao[] getTransicoesDoSimbolo(String s){
+		LinkedList<Transicao> listaTemp = new LinkedList<Transicao>();
+		Iterator<Transicao> it = transicoes.iterator();
+		while(it.hasNext()){
+			Transicao t = it.next();
+			if(t.getSimbolo().equals(s))
+				listaTemp.add(t);
+		}
+		Transicao[] arrTransicoes = new Transicao[listaTemp.size()];
+		it = listaTemp.iterator();
+		int cont = 0;
+		while(it.hasNext()){
+			arrTransicoes[cont] = it.next();
+			cont++;
+		}
+		return arrTransicoes;		
+	}
+	
+	protected void removeTransicoesParaOEstado(Estado e) {
+		Transicao[] ts = getTransicoes();
+		for(int i = 0 ; i < ts.length ; i++)
+			if(ts[i].getDestino() == e){
+				transicoes.remove(ts[i]);
+			}
+		
+	}
+
+	
 }
