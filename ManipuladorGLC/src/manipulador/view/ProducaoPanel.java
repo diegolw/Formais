@@ -32,5 +32,10 @@ public class ProducaoPanel extends JPanel {
 		textFieldEsquerda.setColumns(13);
 
 	}
+	
+	public void setProducao(String naoTerminal, String derivacoes) {
+		textFieldEsquerda.setText(naoTerminal);
+		textFieldDireita.setText(derivacoes);
+	}
 
 }
